@@ -1,0 +1,27 @@
+{
+  "user": {
+    "started": "REPLACE_WITH_TODAY",
+    "level": "intermediate",
+    "goal": "TBD",
+    "preferred_language": "python"
+  },
+  "course_position": {
+    "current_step": null,
+    "current_step_title": null,
+    "next_planned_steps": [],
+    "deviations": [],
+    "completed_steps": []
+  },
+  "current_session": {
+    "active": false,
+    "started_at": null,
+    "last_checkpoint": null,
+    "mode": null,
+    "topic": null,
+    "needs_compaction_check": false
+  },
+  "topics": {},
+  "flashcards": {},
+  "exercises_completed": [],
+  "session_log": []
+}
