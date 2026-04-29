@@ -39,6 +39,7 @@ After your opening proposal, if the user explicitly says "actually, I want to do
 | "Teach me X" / "design Y" / "review Z" | Honor the detour; queue current proposal for next time |
 | "Quiz me" / "review first" | Run review session |
 | "Pause" / "I have to go" / "stop for today" | End-of-session protocol from `references/session-control.md` |
+| "Give me notes" / "write this up" / "summarize this topic" | Generate topic reference notes (see Notes Generation Mode below) |
 | "What's the plan?" / "where are we?" | Show current course position from `progress.json` |
 
 ---
@@ -135,6 +136,7 @@ Once you know what you're doing this session, dispatch to the right mode:
 | Design review | (inline below — see Design Review Mode) |
 | Curriculum planning / "where are we?" | `references/curriculum.md` |
 | User asks for incident / case study | `references/incidents.md` |
+| Notes / handout / "write this up" | Notes Generation Mode (inline below) |
 | Pause / context management / resume | `references/session-control.md` |
 
 Load files only when the relevant mode is active. Never preload everything.
@@ -213,6 +215,83 @@ Triggered by "design X", "mock interview me", or — once it makes sense in the 
 6. **Score honestly at the end.** Three buckets: requirements & scale | core design | deep dives & failure handling.
 7. **Write up the session** to `reviews/YYYY-MM-DD-<system>.md`.
 8. **Update `progress.json` and `session-state.md`** as always.
+
+---
+
+## Notes Generation Mode
+
+Triggered by "give me notes", "write this up", "summarize this topic", "I want something to refer to", or — at the end of a topic/session — offered by you.
+
+### When it fires
+
+- **On-demand (user asks):** Generate immediately for whatever topic is active or specified. This can happen mid-lesson — the user shouldn't have to wait until the end.
+- **End-of-topic offer:** When a topic wraps up (lesson done, exercise done, moving to next curriculum item), check if `notes/<topic-slug>.md` exists. If not, offer: "Want me to write up reference notes for [topic] before we move on?"
+- **End-of-session fallback:** The end-of-session protocol in `references/session-control.md` offers notes for any topic covered this session that doesn't have notes yet.
+
+### What goes in the file
+
+Save to `notes/<topic-slug>.md`. One file per topic — if the topic is revisited later, update the file rather than creating a new one.
+
+Structure:
+
+```markdown
+# [Topic Name]
+
+*Generated: YYYY-MM-DD | Last updated: YYYY-MM-DD*
+
+## One-line summary
+[Single sentence: what this topic is and why it matters.]
+
+## Core concepts
+[Concise explanations of the key ideas — not a textbook, not a transcript.
+Use sub-headings if there are 3+ distinct concepts. Aim for "would make sense
+if you read this cold two weeks from now."]
+
+## Key trade-offs
+| Choice A | Choice B | When to pick A | When to pick B |
+|---|---|---|---|
+
+## Numbers to remember
+[Back-of-envelope formulas, rules of thumb, capacity estimates relevant to this topic.
+Skip this section if the topic has no quantitative angle.]
+
+## Real-world anchors
+- **[System/Company]**: [How they use this concept or what went wrong.]
+[Only include incidents/examples that were actually discussed in the lesson.]
+
+## Common mistakes
+- [Gotcha 1]
+- [Gotcha 2]
+
+## Related artifacts
+- Diagram: `notes/diagrams/<file>.html`
+- Flashcards: `flashcards/<topic>.json`
+- Exercise: `exercises/<date>-<topic>/`
+[Only list artifacts that actually exist in the workspace.]
+```
+
+### Quality bar
+
+- **Skimmable in 2 minutes.** If it takes longer, it's too long.
+- **Self-contained.** Someone who missed the lesson should still get value from reading the notes.
+- **No transcript.** These are reference notes, not a recording of what was said. Distill, don't dump.
+- **Concrete.** Prefer "Kafka uses ISR (in-sync replicas) to track which followers are caught up" over "some systems track follower progress."
+- **Honest about gaps.** If a sub-topic wasn't covered yet, say so: "*[Not yet covered — queued for a future lesson.]*"
+
+### After generating
+
+1. Show the user the notes in the conversation for review.
+2. Save to `notes/<topic-slug>.md`.
+3. Tell them where it is: "Saved to `notes/<topic-slug>.md`."
+4. Don't break flow — if mid-lesson, continue the lesson immediately after.
+
+### Anti-patterns
+
+- ❌ Generating notes silently without the user asking or being offered
+- ❌ Dumping the entire lesson transcript into a file
+- ❌ Creating a new file every time instead of updating the existing one for that topic
+- ❌ Blocking the lesson to generate notes — if mid-lesson, write them quickly and continue
+- ❌ Including concepts that weren't actually taught (don't pad with extra material)
 
 ---
 

@@ -268,4 +268,5 @@ User: "Teach me consistent hashing."
 8. **Connect to incident**: "That hot-key problem you just identified is exactly what Twitter dealt with for years. Search 'Twitter Manhattan hot key' if you want the deep dive."
 9. **Build**: Send them to `references/practical-mode.md` for the consistent-hashing exercise.
 10. **Flashcards**: Offer to generate 6 cards. Mix of why/trade-off/calculation. Save to `flashcards/consistent-hashing.json`.
-11. **Update progress**: Mark `consistent-hashing` in progress (status depends on how they did), seed SR queue.
+11. **Notes offer**: If `notes/consistent-hashing.md` doesn't exist, offer: "Want me to write up reference notes for consistent hashing?" Generate per the Notes Generation Mode in `SKILL.md`.
+12. **Update progress**: Mark `consistent-hashing` in progress (status depends on how they did), seed SR queue.
