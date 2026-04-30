@@ -2,6 +2,30 @@
 
 How to run **runnable code exercises** so the user actually builds and breaks systems instead of just reading about them. Default language is Python, but ask before each exercise — the user said "anything should work."
 
+If the user asks for more practice ("another exercise", "more coding", "harder one", "easier one"), stay in practical mode by default for the next 1-3 sessions before returning to theory unless they explicitly ask to switch.
+
+## Difficulty control loop (mandatory)
+
+Before generating exercise code, run this loop:
+
+1. **Pre-flight calibration (3 quick checks)**
+   - Concept check: one short "why/when" question on the target concept.
+   - Coding comfort check: ask if they can implement the core data structure/protocol without template hand-holding.
+   - Tooling comfort check: verify comfort with `pytest`, `asyncio`/`multiprocessing`, or Docker if needed.
+2. **Set planned difficulty**
+   - `easy`: smaller scope, fewer moving parts, stronger scaffolding.
+   - `medium`: standard exercise path.
+   - `hard`: full constraints, less scaffolding, adversarial cases.
+3. **Generate in three layers**
+   - `core`: must-pass path (30-45 min).
+   - `stretch`: deeper extension (+30-60 min).
+   - `chaos`: failure injection / adversarial scenario (optional).
+4. **Adapt during execution**
+   - If stuck or repeated failures: downshift one level, keep topic fixed.
+   - If fast success: offer stretch first, then chaos.
+5. **Log observed difficulty**
+   - Write `planned_difficulty`, `observed_difficulty`, `hints_used_max_level`, and attempt counters into `progress.json`.
+
 ## The core principle
 
 Reading about consistent hashing is not knowing it. Writing a 30-line Python script that hashes keys, places them on a ring, and watches half your keys go to the wrong node when you bump the modulus — *that* is knowing it.
@@ -13,6 +37,7 @@ Every practical exercise must:
 3. **Use real concurrency / network when relevant.** A "distributed cache" exercise that runs in one process is less educational than one that runs three processes communicating over loopback.
 4. **Live in the workspace.** `exercises/<topic>/` with proper structure — not throwaway snippets.
 5. **Be measurable.** Has tests, or a measurable outcome ("rebalance moves <5% of keys when adding a node"), or both.
+6. **Expose one visible failure mode first.** Learner should see what breaks before the fix.
 
 ## Exercise structure on disk
 
@@ -43,11 +68,14 @@ Naming: `YYYY-MM-DD-<topic>` so the user has a chronological record.
 
 1. **Confirm topic + language.** "Consistent hashing exercise — Python OK or want to try this in Go?"
 2. **Confirm prereqs.** Check `progress.json`. If they haven't covered something the exercise needs, warn them.
+   - Also read `progress.json.user.practice_preference` (`low|medium|high`) and size exercise scope accordingly.
 3. **Set up the folder.** Create the structure above.
 4. **Write the README.md first.** Problem statement, what they should observe, and hints for the parts you want them to figure out.
+   - README must explicitly label `core`, `stretch`, and `chaos`.
 5. **Write `starter.py`** with TODO markers where they need to fill in the interesting parts. Keep boilerplate (imports, main, plumbing) intact — make them write the *concept*, not the loop.
 6. **Write tests** that capture the success criteria, but **don't show the user the tests yet** if the topic includes "figure out how to know it's correct." For pure implementation topics (consistent hashing math, token bucket math), show the tests upfront.
 7. **Hand it over.** "Open `exercises/<folder>/README.md`. Start with `starter.py`. Run `make test` to check yourself. Yell when you're stuck or done."
+   - Always append this line on handoff: "If this feels too easy or too hard, say 'make this easier' or 'make this harder' and I'll adjust the same exercise."
 
 ## Workflow during the exercise
 
@@ -56,7 +84,12 @@ The user codes; you stay available. Two failure modes to watch for:
 ### They're stuck for 5+ minutes
 - Don't give the answer. Ask: "What have you tried? What did you expect vs what happened?"
 - Narrow the problem. "Forget the multi-node case for now — does it work for one node?"
-- Drop a hint, not the solution. "Think about what happens when you take the modulus of the hash."
+- Use the hint ladder (progressive disclosure):
+  - Level 1: directional hint
+  - Level 2: pseudocode outline
+  - Level 3: near-code hint for one function
+  - Level 4: patch-level correction
+- Log the highest hint level used.
 
 ### They wrote something that "works" but is wrong
 - Don't say "wrong." Run their code with an adversarial input. Let the output tell them.
@@ -71,6 +104,11 @@ The user codes; you stay available. Two failure modes to watch for:
 4. **Add a stress test.** Crank up the scale or inject a failure. Things often break.
 5. **Write up `notes.md`** with: what they built, what tripped them up, what they learned, and what to revisit. This is what the SR system surfaces later.
 6. **Update `progress.json`**: mark the exercise complete, log the topic, add weak spots.
+   - Append events to `event_log` for `exercise_started`, `exercise_checkpoint`, `exercise_completed` (append-only; never delete old events).
+7. **Apply graduation gates before increasing difficulty**:
+   - Tests or measurable success criteria passed
+   - User can explain at least one key trade-off
+   - User handles one adversarial/failure case
 
 ## Common exercise patterns
 
@@ -113,6 +151,15 @@ If the user says "I want to actually feel this distributed thing":
 - ❌ **No measurable outcome** — "implement consistent hashing" is fuzzy. "Show that adding 1 of 10 nodes moves <15% of keys" is concrete.
 - ❌ **Solving without breaking** — if they don't see *why* the naive approach fails, they won't appreciate the fix.
 - ❌ **Toy data** — 10 keys is a toy. 100,000 keys with a histogram makes load imbalance visible.
+- ❌ **No layering** — one monolithic exercise with no core/stretch/chaos split.
+- ❌ **Difficulty whiplash** — jumping from easy to hard without gates.
+
+## Generation guardrails (to avoid too basic / too hard)
+
+- Require at least one visible failure mode before the final fix.
+- Require at least one measurable metric (e.g., keys moved %, stale-read rate, p95 latency).
+- For sharding/caching/load distribution exercises, avoid tiny datasets; use scale where imbalance is visible.
+- Keep `core` solvable in one focused sitting; push complexity into `stretch` and `chaos`.
 
 ## What "good" looks like — full example walkthrough
 

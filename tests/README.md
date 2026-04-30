@@ -23,6 +23,9 @@ When the skill triggers, does it dispatch to the right mode? "Design Twitter" sh
 ### 3. Progress.json hygiene (`test-progress-json.md`)
 After a mock lesson, does the skill produce valid JSON that conforms to the schema in `references/spaced-repetition.md`? Verifiable: parse it and validate.
 
+### 4. Practical coverage (`test-practical-coverage.md`)
+Does practical work cover the course breadth (tiers + required checkpoints), not just repeated exercises in one area? Verifiable from `progress.json.practical_coverage`.
+
 ## What's NOT tested here, and why not
 
 - **Lesson quality.** Subjective. Use it and judge for yourself.

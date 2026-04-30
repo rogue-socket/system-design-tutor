@@ -3,7 +3,8 @@
     "started": "REPLACE_WITH_TODAY",
     "level": "intermediate",
     "goal": "TBD",
-    "preferred_language": "python"
+    "preferred_language": "python",
+    "practice_preference": "medium"
   },
   "course_position": {
     "current_step": null,
@@ -23,5 +24,28 @@
   "topics": {},
   "flashcards": {},
   "exercises_completed": [],
-  "session_log": []
+  "session_log": [],
+  "event_log": [],
+  "practical_coverage": {
+    "tier_counts": {
+      "tier1-storage": 0,
+      "tier2-replication": 0,
+      "tier3-partitioning": 0,
+      "tier4-consistency": 0,
+      "tier5-messaging": 0,
+      "tier6-reliability": 0,
+      "tier7-specialized": 0,
+      "tier8-integration": 0
+    },
+    "required_tags_completed": [],
+    "required_tags_missing": [
+      "required-consistent-hashing",
+      "required-replication-lag",
+      "required-idempotency",
+      "required-distributed-rate-limiter",
+      "required-failure-injection"
+    ],
+    "coverage_score": 0.0,
+    "last_updated": "REPLACE_WITH_TODAY"
+  }
 }

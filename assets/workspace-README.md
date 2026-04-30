@@ -10,6 +10,7 @@ You can interject any time:
 - **"Pause"** / **"I have to go"** — Claude saves state and ends the session cleanly.
 - **"Continue"** / **"yes"** — Accept the proposed next step.
 - **"Actually, let's do X"** — Detour. Claude will note where to return.
+- **"Make this easier"** / **"Make this harder"** — During coding exercises, Claude keeps the same topic and adjusts difficulty.
 - **"Where are we?"** — Claude shows your course position.
 - **"What's due today?"** — Claude surfaces SR queue.
 

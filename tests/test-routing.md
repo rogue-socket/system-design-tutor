@@ -24,6 +24,9 @@ Paste each prompt into a fresh session with the skill installed. Check the respo
 | R4 | "Teach me consistent hashing" (mid-course) | Theory mode, queue current path step |
 | R5 | "I want to understand quorum reads" | Theory |
 | R6 | "Give me a practical exercise on rate limiting" | Practical |
+| R6b | "Give me another coding exercise, harder this time" | Practical; next exercise selected with higher challenge |
+| R6c | "Make this exercise easier" | Practical; same topic, downshift scope/constraints |
+| R6d | "Make this harder with one failure scenario" | Practical; same topic, add adversarial constraint |
 | R7 | "Quiz me" / "What's due today?" | Recall (SR queue) |
 | R8 | "Design Twitter" | Mock interview |
 | R9 | "Mock interview me on a URL shortener" | Mock interview |
@@ -57,6 +60,14 @@ These are the routing mistakes I'd expect to see. Each has a fix.
 ### Failure: First session → doesn't offer onboarding paths
 - **Symptom**: Skill doesn't notice missing `progress.json`, just starts teaching
 - **Fix**: Make sure Step 1 in `SKILL.md` actually checks for the workspace.
+
+### Failure: "another exercise" → bounces back to theory
+- **Symptom**: User asks for more coding practice and the skill proposes a theory lesson.
+- **Fix**: Strengthen practical-priority routing and read `user.practice_preference` from `progress.json` before choosing the next step.
+
+### Failure: "make this easier/harder" → changes topic instead of difficulty
+- **Symptom**: Skill swaps to a different concept instead of resizing the same exercise.
+- **Fix**: Enforce same-topic difficulty adjustment with `core/stretch/chaos` layering.
 
 ## How to interpret results
 

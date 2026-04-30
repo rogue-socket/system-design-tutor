@@ -4,12 +4,25 @@ import sys
 from datetime import datetime
 
 
-REQUIRED_TOP_LEVEL = ["user", "course_position", "current_session", "topics", "flashcards", "exercises_completed", "session_log"]
-REQUIRED_USER_FIELDS = ["started", "level", "preferred_language"]
+REQUIRED_TOP_LEVEL = ["user", "course_position", "current_session", "topics", "flashcards", "exercises_completed", "session_log", "event_log", "practical_coverage"]
+REQUIRED_USER_FIELDS = ["started", "level", "preferred_language", "practice_preference"]
 REQUIRED_COURSE_POSITION_FIELDS = ["current_step", "next_planned_steps", "deviations", "completed_steps"]
 REQUIRED_SESSION_FIELDS = ["active", "started_at", "last_checkpoint", "mode", "topic"]
 VALID_TOPIC_STATUS = {"not-started", "in-progress", "needs-review", "complete"}
 VALID_MODES = {None, "theory", "practical", "review", "mock-interview", "design-review", "onboarding"}
+VALID_PRACTICE_PREFERENCE = {"low", "medium", "high"}
+VALID_DIFFICULTY = {"easy", "medium", "hard"}
+REQUIRED_PRACTICAL_COVERAGE_FIELDS = ["tier_counts", "required_tags_completed", "required_tags_missing", "coverage_score", "last_updated"]
+REQUIRED_TIERS = [
+    "tier1-storage",
+    "tier2-replication",
+    "tier3-partitioning",
+    "tier4-consistency",
+    "tier5-messaging",
+    "tier6-reliability",
+    "tier7-specialized",
+    "tier8-integration",
+]
 
 
 def validate_date(s, field):
@@ -35,6 +48,8 @@ def validate_progress(p):
                 validate_date(p["user"]["started"], "user.started")
             except AssertionError as e:
                 errors.append(str(e))
+        if "practice_preference" in p["user"] and p["user"]["practice_preference"] not in VALID_PRACTICE_PREFERENCE:
+            errors.append(f"user.practice_preference invalid: {p['user']['practice_preference']!r}")
 
     if "course_position" in p:
         for f in REQUIRED_COURSE_POSITION_FIELDS:
@@ -57,6 +72,32 @@ def validate_progress(p):
             errors.append("current_session.active must be a boolean")
         if "mode" in cs and cs["mode"] not in VALID_MODES:
             errors.append(f"current_session.mode invalid: {cs['mode']!r}")
+
+    if "practical_coverage" in p:
+        pc = p["practical_coverage"]
+        for f in REQUIRED_PRACTICAL_COVERAGE_FIELDS:
+            if f not in pc:
+                errors.append(f"missing practical_coverage.{f}")
+        if "tier_counts" in pc:
+            if not isinstance(pc["tier_counts"], dict):
+                errors.append("practical_coverage.tier_counts must be an object")
+            else:
+                for tier in REQUIRED_TIERS:
+                    if tier not in pc["tier_counts"]:
+                        errors.append(f"missing practical_coverage.tier_counts.{tier}")
+                    elif pc["tier_counts"][tier] < 0:
+                        errors.append(f"practical_coverage.tier_counts.{tier} must be >= 0")
+        if "required_tags_completed" in pc and not isinstance(pc["required_tags_completed"], list):
+            errors.append("practical_coverage.required_tags_completed must be a list")
+        if "required_tags_missing" in pc and not isinstance(pc["required_tags_missing"], list):
+            errors.append("practical_coverage.required_tags_missing must be a list")
+        if "coverage_score" in pc and not (0.0 <= pc["coverage_score"] <= 1.0):
+            errors.append(f"practical_coverage.coverage_score out of range: {pc['coverage_score']}")
+        if "last_updated" in pc:
+            try:
+                validate_date(pc["last_updated"], "practical_coverage.last_updated")
+            except AssertionError as e:
+                errors.append(str(e))
 
     for topic_id, topic in p.get("topics", {}).items():
         if "status" in topic and topic["status"] not in VALID_TOPIC_STATUS:
@@ -86,6 +127,19 @@ def validate_progress(p):
         for f in ("topic", "folder", "completed"):
             if f not in ex:
                 errors.append(f"exercises_completed[{i}] missing {f}")
+        if "planned_difficulty" in ex and ex["planned_difficulty"] not in VALID_DIFFICULTY:
+            errors.append(f"exercises_completed[{i}].planned_difficulty invalid: {ex['planned_difficulty']!r}")
+        if "observed_difficulty" in ex and ex["observed_difficulty"] not in VALID_DIFFICULTY:
+            errors.append(f"exercises_completed[{i}].observed_difficulty invalid: {ex['observed_difficulty']!r}")
+        if "hints_used_max_level" in ex and not (0 <= ex["hints_used_max_level"] <= 4):
+            errors.append(f"exercises_completed[{i}].hints_used_max_level out of range: {ex['hints_used_max_level']}")
+        if "attempt_count" in ex and ex["attempt_count"] < 1:
+            errors.append(f"exercises_completed[{i}].attempt_count must be >= 1: {ex['attempt_count']}")
+
+    for i, ev in enumerate(p.get("event_log", [])):
+        for f in ("ts", "type", "topic", "details"):
+            if f not in ev:
+                errors.append(f"event_log[{i}] missing {f}")
 
     return errors
 

@@ -16,7 +16,7 @@ This requires three things to work cleanly:
 
 ### `progress.json` (long-term state)
 
-Schema is in `spaced-repetition.md`. This is the *what* — what topics are done, what's weak, what's due. Survives across all sessions forever.
+Schema is in `spaced-repetition.md`. This is the *what* — what topics are done, what's weak, what's due. Survives across all sessions forever. It also includes an append-only `event_log` timeline.
 
 ### `session-state.md` (session-bridging state)
 
@@ -117,7 +117,7 @@ How to suggest:
 
 Then:
 1. Update `session-state.md` with current position and "next planned step"
-2. Update `progress.json` with anything earned this session
+2. Update `progress.json` with anything earned this session and append events to `event_log`
 3. Tell the user: "Done. Checkpoint saved. Run `/compact` now and say 'continue' when you're back."
 
 ### When to suggest /clear (or new chat)
@@ -161,6 +161,7 @@ On user pause, or end of natural unit of work:
    - Any weak spots that surfaced
    - Session log entry
    - Any flashcards generated
+   - Append `event_log` entries for key actions taken during this wrap-up
 4. **Offer topic notes.** For each topic covered this session, check if `notes/<topic-slug>.md` exists. If not, offer: "Want me to write up reference notes for [topic] before we wrap?" Generate per the Notes Generation Mode in `SKILL.md`. Also generate any other pending artifacts (diagrams, exercise write-ups).
 5. **Brief summary to the user**: 3-4 lines max.
    > "Saved. Today we covered [X], you nailed [Y], and I've queued [Z] for next session. See you next time."

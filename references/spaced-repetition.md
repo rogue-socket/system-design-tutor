@@ -12,7 +12,8 @@ Located at the workspace root. Here's the full schema:
     "started": "2026-04-29",
     "level": "intermediate",
     "goal": "interview-prep",
-    "preferred_language": "python"
+    "preferred_language": "python",
+    "practice_preference": "medium"
   },
   "course_position": {
     "current_step": "P3",
@@ -64,7 +65,11 @@ Located at the workspace root. Here's the full schema:
       "topic": "consistent-hashing",
       "folder": "exercises/2026-04-29-consistent-hashing",
       "completed": "2026-04-29",
-      "notes": "Working impl. Took ~90 min. Stuck on wraparound for 15 min."
+      "notes": "Working impl. Took ~90 min. Stuck on wraparound for 15 min.",
+      "planned_difficulty": "medium",
+      "observed_difficulty": "hard",
+      "hints_used_max_level": 2,
+      "attempt_count": 2
     }
   ],
   "session_log": [
@@ -74,6 +79,43 @@ Located at the workspace root. Here's the full schema:
       "topics": ["consistent-hashing"],
       "type": "theory+exercise"
     }
+  ],
+  "event_log": [
+    {
+      "ts": "2026-04-30T14:00:00",
+      "type": "session_started",
+      "topic": "consistent-hashing",
+      "details": "Warm resume"
+    },
+    {
+      "ts": "2026-04-30T14:23:00",
+      "type": "exercise_completed",
+      "topic": "consistent-hashing",
+      "details": "Completed main task and experiment"
+    }
+  ],
+  "practical_coverage": {
+    "tier_counts": {
+      "tier1-storage": 1,
+      "tier2-replication": 1,
+      "tier3-partitioning": 1,
+      "tier4-consistency": 0,
+      "tier5-messaging": 0,
+      "tier6-reliability": 0,
+      "tier7-specialized": 0,
+      "tier8-integration": 0
+    },
+    "required_tags_completed": [
+      "required-consistent-hashing",
+      "required-replication-lag"
+    ],
+    "required_tags_missing": [
+      "required-idempotency",
+      "required-distributed-rate-limiter",
+      "required-failure-injection"
+    ],
+    "coverage_score": 0.33,
+    "last_updated": "2026-04-30"
   ]
 }
 ```
@@ -107,6 +149,25 @@ Located at the workspace root. Here's the full schema:
 - 5: could teach it
 
 **`flashcards[id].ease`**: SM-2 ease factor. Starts at 2.5. Adjusted by performance.
+
+**`event_log`**:
+- Append-only timeline of meaningful actions.
+- Never delete entries during normal operation.
+- Minimum fields: `ts` (ISO datetime), `type`, `topic`, `details`.
+- Suggested event types: `session_started`, `lesson_started`, `lesson_completed`, `exercise_started`, `exercise_checkpoint`, `exercise_completed`, `quiz_reviewed`, `detour_requested`, `session_paused`, `session_ended`.
+
+**`practical_coverage`**:
+- `tier_counts`: completed practical artifacts per tier
+- `required_tags_completed`: subset of required practical checkpoints already covered
+- `required_tags_missing`: required checkpoints not yet covered
+- `coverage_score`: 0.0-1.0 (required checkpoints completed / total required checkpoints)
+- `last_updated`: YYYY-MM-DD
+
+**`exercises_completed[*]` adaptive fields**:
+- `planned_difficulty`: `easy|medium|hard`
+- `observed_difficulty`: `easy|medium|hard`
+- `hints_used_max_level`: integer 0-4
+- `attempt_count`: integer >= 1
 
 ## SM-2 lite: scheduling logic
 
@@ -185,10 +246,19 @@ For each card reviewed:
 ### After a practical exercise
 ```
 exercises_completed.append({
-  topic, folder, completed: today, notes: what tripped them up
+  topic,
+  folder,
+  completed: today,
+  notes: what tripped them up,
+  planned_difficulty: easy|medium|hard,
+  observed_difficulty: easy|medium|hard,
+  hints_used_max_level: 0-4,
+  attempt_count: integer,
+  coverage_tags: [ ... ]
 })
 topics[X].confidence += 1 (if exercise went well)
 topics[X].weak_points = update with any specific stumbles
+update practical_coverage tier_counts/required_tags/coverage_score
 ```
 
 ### After a mock interview
@@ -257,7 +327,37 @@ Don't drag this out. A 10-card session should take 10 minutes max.
 - **User wants to ignore SR for a session**: Fine. Don't nag. But still update progress at the end.
 - **User says "I'm rusty, let me redo X"**: Reset `topics[X].confidence` and re-add prerequisites' due reviews to the queue.
 - **Cards getting stale because user hasn't logged in for weeks**: Don't dump 80 due cards. Surface 10 most-overdue, suggest a "rust removal" session.
+- **`progress.json` gets too large**: Keep the summary fields in place, and archive old `event_log` segments to `meta/progress-archive-YYYY-MM.json` while preserving append-only history.
 
 ## Implementation note
 
 You don't need to actually run Python to do this math — just compute it inline and write the updated JSON back to disk. Use the workspace's filesystem tools (Read, Write, Edit) directly.
+**`user.practice_preference`**:
+- `low`: mostly theory; exercises on request
+- `medium`: balanced theory + practical
+- `high`: prioritize practical sessions and back-to-back exercises
+
+### Event log update (every meaningful interaction)
+```
+event_log.append({
+  "ts": now_iso,
+  "type": "<event_type>",
+  "topic": "<topic-slug-or-null>",
+  "details": "<short factual summary>"
+})
+```
+
+This is append-only history. Do not remove or rewrite older events.
+
+### Difficulty adaptation policy
+
+When picking the next practical exercise:
+- If `observed_difficulty` > `planned_difficulty` or `hints_used_max_level >= 3`, downshift next exercise by one level.
+- If `observed_difficulty` < `planned_difficulty`, `hints_used_max_level <= 1`, and success criteria were met quickly, offer harder variant or `stretch/chaos`.
+- If repeated mismatch persists for 2+ exercises, hold difficulty constant and switch modality (e.g., theory mini-lesson + core-only practical).
+
+### Coverage policy (core product quality)
+
+- Never mark the course complete unless all required practical tags are complete.
+- If `coverage_score < 0.7`, prioritize coverage-filling exercises over optional deep dives.
+- If a tier has zero practical artifacts after its theory section is completed, schedule a practical session before moving to the next tier.

@@ -301,3 +301,27 @@ I6.  [R]  Final synthesis session
 - **Review sessions [R]**: triggered automatically every 3-5 path steps, or when SR queue is heavy.
 
 Don't walk the path mechanically. If diagnostic showed the user has solid replication knowledge but weak partitioning, skip R1-R3 to spot-check, then dive into P1.
+
+---
+
+## Practical Coverage Standard (must-hit)
+
+Because practical work is the core of this course, enforce this minimum exercise coverage before calling the course "complete":
+
+- Tier 1 (storage): at least 1 completed exercise
+- Tier 2 (replication): at least 2 completed exercises
+- Tier 3 (partitioning): at least 2 completed exercises
+- Tier 4 (transactions/consistency): at least 2 completed exercises
+- Tier 5 (async/messaging): at least 1 completed exercise
+- Tier 6 (reliability): at least 2 completed exercises
+- Tier 7 (specialized deep dives): at least 2 completed exercises
+- Tier 8 (integration): at least 3 mock interviews or full builds
+
+Required concept checkpoints (must have at least one hands-on artifact each):
+- consistent hashing / partition movement
+- replication lag or stale-read behavior
+- idempotency under at-least-once delivery
+- distributed rate limiting
+- one failure-injection exercise (node kill, network fault, hot key, retry storm)
+
+If the learner progresses through theory but misses these, propose practical sessions before advancing further.

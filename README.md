@@ -46,6 +46,7 @@ Open Claude Code and say any of:
 - `"mock interview me on designing a chat system"` — run a mock interview
 - `"review my design"` — get feedback on a design you're working on
 - `"what's due today"` — check spaced repetition reviews
+- During coding exercises: `"make this easier"` or `"make this harder"` — adjust difficulty without changing topic
 
 The skill creates a workspace at `~/system-design/` where it stores your progress, exercise files, and session state.
 
@@ -80,3 +81,47 @@ tests/
 ## License
 
 MIT
+
+## Publish (Both Places)
+
+This skill can be published in:
+- Claude Skills (direct upload in Claude app)
+- skills.sh ecosystem (GitHub + Agent Skills format)
+
+### A) Publish to Claude Skills
+
+1. Package the skill folder as a zip:
+```bash
+cd /path/to/parent
+zip -r system-design-tutor.zip system-design-tutor
+```
+2. In Claude, open:
+   - `Customize` → `Skills` → `+ Create skill` → `Upload a skill`
+3. Upload `system-design-tutor.zip`.
+4. Enable the skill toggle.
+5. On Team/Enterprise, use Share to publish to your org directory.
+
+### B) Publish to skills.sh ecosystem
+
+1. Push this repository to a public GitHub repo.
+2. Confirm `SKILL.md` frontmatter includes:
+   - `name`
+   - `description`
+   - `license`
+   - optional `compatibility`, `metadata`
+3. Keep the directory layout standard:
+   - `SKILL.md`
+   - `references/`
+   - `assets/`
+   - `tests/`
+4. Follow skills.sh docs for listing/install flow and CLI usage:
+   - https://skills.sh/docs
+5. Keep your README examples current so listing reviewers can quickly verify usage prompts.
+
+### Quick pre-publish checklist
+
+- `SKILL.md` name matches directory name (`system-design-tutor`)
+- Description includes clear trigger phrases
+- License is present (`MIT`)
+- No private/internal links
+- Test prompts in `tests/` still match actual behavior

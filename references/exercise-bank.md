@@ -1,8 +1,34 @@
 # Exercise Bank
 
 Catalog of practical exercises by topic. Each entry has prerequisites, what to build, success criteria, common mistakes, and pattern (from `practical-mode.md`).
+When possible, also tag exercises with `difficulty` (`easy|medium|hard`) and `duration_min` so "another exercise" requests can be routed deterministically.
 
 When the user wants an exercise on topic X, find it here and follow the playbook in `practical-mode.md`. If a topic isn't here, design one using the principles in `practical-mode.md` and consider adding it.
+
+## Metadata contract for each exercise
+
+For deterministic selection and scaling, new/updated entries should include:
+- `difficulty`: `easy|medium|hard`
+- `duration_min`: realistic estimate
+- `prereq_topics`: list
+- `failure_modes_expected`: at least one
+- `success_signals`: measurable pass checks
+- `next_if_done`: recommended follow-up
+- `next_if_stuck`: simpler fallback or prerequisite refresh
+- `coverage_tags`: one or more tags from:
+  - `tier1-storage`
+  - `tier2-replication`
+  - `tier3-partitioning`
+  - `tier4-consistency`
+  - `tier5-messaging`
+  - `tier6-reliability`
+  - `tier7-specialized`
+  - `tier8-integration`
+  - `required-consistent-hashing`
+  - `required-replication-lag`
+  - `required-idempotency`
+  - `required-distributed-rate-limiter`
+  - `required-failure-injection`
 
 ---
 
@@ -201,7 +227,30 @@ These are weekend-scale projects. Each integrates many topics. Use them when the
 When the user asks "give me an exercise" or "let me practice X":
 
 1. Check `progress.json` for completed exercises and weak spots.
+   - Also check `user.practice_preference` (`low|medium|high`) to pick scope and challenge.
 2. Pick something matching their current topic, prerequisites met, that they haven't done.
+   - If they asked for "another/harder/easier" exercise, stay in practical mode and honor requested difficulty.
+   - Keep concept fixed when shifting difficulty; only change scope/constraints.
 3. State the time estimate honestly: "This is ~2 hours including the experiment."
 4. Confirm scope: "We can do the basic version (1 hour) or include failure injection (3 hours). Which?"
 5. Set it up using `practical-mode.md`.
+
+## Coverage-first selection rule
+
+Before choosing a new exercise:
+1. Check `progress.json.practical_coverage`.
+2. Prefer exercises that fill uncovered required tags over novelty.
+3. If coverage is weak in a tier, choose from that tier even if the user is generally progressing.
+4. If user requests a specific detour, honor it but note any remaining required coverage gaps and schedule return.
+
+## Rescue and challenge controls
+
+If user says "make this easier":
+- Keep the same topic.
+- Reduce moving parts and constraints.
+- Keep only `core` path and defer `stretch/chaos`.
+
+If user says "make this harder":
+- Keep the same topic.
+- Add one realistic adversarial constraint (hot key, node failure, stale read, retry storm).
+- Require one extra measurable success criterion.

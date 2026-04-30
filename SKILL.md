@@ -1,6 +1,13 @@
 ---
 name: system-design-tutor
-description: Run an end-to-end, Claude-driven system design course for the user. The skill OWNS the curriculum — when invoked, Claude initiates onboarding, drives lessons, schedules reviews, runs practical exercises, and checkpoints state across sessions. Use this skill when the user invokes the system design tutor, opens a system-design workspace, or makes any request that's clearly within the system-design course (learning, reviewing, practicing, mock interviewing). Trigger this skill on phrases like "start the course", "system design tutor", "continue the course", "let's keep going", or any open of a system-design workspace folder. Also trigger on standard topical phrasings ("teach me X", "review my design", "design Y", "what's due today") since the user may interject for a detour. Do NOT use for unrelated coding tasks. The course covers distributed systems, scalability, databases, caching, queues, sharding, consistency, replication, microservices, load balancing, and architecture, anchored to Designing Data-Intensive Applications and the System Design Primer.
+description: Run an end-to-end, Claude-driven system design course for the user. The skill OWNS the curriculum — when invoked, Claude initiates onboarding, drives lessons, schedules reviews, runs practical exercises, and checkpoints state across sessions. Use this skill when the user invokes the system design tutor, opens a system-design workspace, or makes any request that's clearly within the system-design course (learning, reviewing, practicing, mock interviewing). Trigger this skill on phrases like "start the course", "system design tutor", "continue the course", "let's keep going", or any open of a system-design workspace folder. Also trigger on standard topical phrasings ("teach me X", "review my design", "design Y", "what's due today") and explicit practice requests ("more exercises", "another coding exercise", "harder/easier practice", "more hands-on") since the user may interject for a detour. Do NOT use for unrelated coding tasks. The course covers distributed systems, scalability, databases, caching, queues, sharding, consistency, replication, microservices, load balancing, and architecture, anchored to Designing Data-Intensive Applications and the System Design Primer.
+license: MIT
+compatibility: Designed for Claude Code and Claude Skills upload; expects filesystem access for workspace creation at ~/system-design and local JSON/markdown file updates.
+metadata:
+  author: rogue-socket
+  category: education
+  domain: system-design
+  version: "1.0.0"
 ---
 
 # System Design Tutor
@@ -38,6 +45,9 @@ After your opening proposal, if the user explicitly says "actually, I want to do
 | "Continue" / "yes" / "ok" / "let's go" | Execute the proposal |
 | "Teach me X" / "design Y" / "review Z" | Honor the detour; queue current proposal for next time |
 | "Quiz me" / "review first" | Run review session |
+| "More coding practice" / "another exercise" / "harder one" / "easier one" | Route to practical mode; prioritize a new exercise over theory |
+| "Make this easier" | Keep topic fixed, downshift scope/constraints, stay in practical mode |
+| "Make this harder" | Keep topic fixed, add one realistic failure or scale constraint, stay in practical mode |
 | "Pause" / "I have to go" / "stop for today" | End-of-session protocol from `references/session-control.md` |
 | "Give me notes" / "write this up" / "summarize this topic" | Generate topic reference notes (see Notes Generation Mode below) |
 | "What's the plan?" / "where are we?" | Show current course position from `progress.json` |
@@ -97,6 +107,9 @@ Then **announce the path and immediately start the first lesson**:
 
 Then transition straight into theory mode. Do not pause to ask "ready?" — just begin.
 
+When you first assign a practical exercise in this or any later session, explicitly tell the user:
+> "If this feels off-level, say 'make this easier' or 'make this harder' and I'll adjust without changing the topic."
+
 ---
 
 ## Cold Resume (Case B)
@@ -120,6 +133,9 @@ The standard "user is back" flow. Detailed protocol is in `references/session-co
 5. Execute. Don't preamble more once they confirm.
 
 If the gap is 14+ days, suggest a brief review session first.
+
+If today's plan includes a practical exercise, include a one-line reminder in the proposal:
+> "During exercises you can say 'make this easier' or 'make this harder' anytime."
 
 ---
 
@@ -188,6 +204,8 @@ Update `progress.json` after every meaningful interaction:
 - Flashcards: SR scheduling
 - Exercises: log completion
 - Sessions: log session entries
+- Event log: append one immutable event to `event_log` (never delete old events)
+- Exercise tuning: record `planned_difficulty`, `observed_difficulty`, `hints_used_max_level`, and attempt count for practical sessions
 
 Schemas and SR math are in `references/spaced-repetition.md`. Session-state schema is in `references/session-control.md`.
 

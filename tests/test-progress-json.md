@@ -26,6 +26,8 @@ Run a short scripted session, then inspect the resulting `progress.json`. Either
 - `~/system-design/progress.json` exists
 - `progress.json` has `topics["consistent-hashing"]` with `status` set, `confidence` set (1-5), `last_reviewed` set to today's date
 - `session_log` has one entry for today
+- `event_log` has append-only entries including at least `session_started` and one lesson-related event
+- `practical_coverage` exists with `tier_counts`, required tag lists, and `coverage_score`
 - If flashcards were generated, `flashcards/` directory exists with at least one .json file
 - If diagrams were generated, `notes/diagrams/` exists with HTML files
 
@@ -45,6 +47,9 @@ Run a short scripted session, then inspect the resulting `progress.json`. Either
 - `~/system-design/exercises/<date>-consistent-hashing/` exists with README.md, starter.py, etc.
 - `progress.json` has a new entry in `exercises_completed` referencing this folder
 - `topics["consistent-hashing"].confidence` may have increased
+- `event_log` has `exercise_started` and `exercise_completed` entries appended (not replacing prior entries)
+- Exercise entry records adaptive data when available: `planned_difficulty`, `observed_difficulty`, `hints_used_max_level`, `attempt_count`
+- `practical_coverage.tier_counts` and required tag lists update based on exercise `coverage_tags`
 
 ### Scenario C: Mock interview
 
@@ -62,6 +67,7 @@ Run a short scripted session, then inspect the resulting `progress.json`. Either
 - `progress.json` has session_log entry with type "mock-interview"
 - Topics that came up are in `topics{}` with appropriate status
 - If specific weak spots surfaced (e.g., "couldn't pick database"), they're captured
+- `event_log` includes mock interview events appended
 
 ### Scenario D: Spaced repetition update
 
@@ -93,6 +99,7 @@ Run a short scripted session, then inspect the resulting `progress.json`. Either
 - `session-state.md` exists, with sections: "Where we left off", "Open threads", "Next planned step", "Active artifacts", "Recent confusion / weak spots"
 - `progress.json.current_session.active` = false
 - `progress.json.current_session.last_checkpoint` updated
+- `progress.json.event_log` has a `session_paused` or `session_ended` style event appended
 - Brief closing message from Claude (3-4 lines max), no preamble for "next session"
 
 **Then start a new session**:
@@ -212,6 +219,8 @@ if __name__ == "__main__":
 - All expected files are created in the right locations
 - All expected fields are populated with sensible values
 - No fields contain placeholder strings like "TBD" or "REPLACE_WITH_TODAY" after a real session
+- `event_log` is append-only across scenarios (earlier entries remain present)
+- Adaptive exercise fields are valid when present (`difficulty` values and hint/attempt ranges)
 
 ## When to re-run
 

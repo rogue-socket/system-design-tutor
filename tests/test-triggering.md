@@ -25,6 +25,10 @@ These should all activate the skill. If any don't, the description in `SKILL.md`
 | T13 | "How does Kafka guarantee message ordering?" | Topical, no explicit "teach" verb |
 | T14 | "Where are we in the course?" | Status check |
 | T15 | "I'm studying DDIA chapter 5, can you help?" | Source reference |
+| T16 | "Give me another coding exercise" | Explicit practice request |
+| T17 | "More hands-on practice, harder this time" | Practical-intensity request |
+| T18 | "Make this exercise easier" | Practical rescue-mode request |
+| T19 | "Make this harder with failures" | Practical challenge-mode request |
 
 ## Should NOT trigger (skill stays quiet)
 
