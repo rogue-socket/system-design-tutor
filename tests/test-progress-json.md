@@ -45,6 +45,7 @@ Run a short scripted session, then inspect the resulting `progress.json`. Either
 
 **Expected after the session**:
 - `~/system-design/exercises/<date>-consistent-hashing/` exists with README.md, starter.py, etc.
+- `production-readiness.md` exists in the exercise folder with at least the "Metrics to emit" and "Alerts to configure" sections filled (graduation gate; other sections encouraged but not required)
 - `progress.json` has a new entry in `exercises_completed` referencing this folder
 - `topics["consistent-hashing"].confidence` may have increased
 - `event_log` has `exercise_started` and `exercise_completed` entries appended (not replacing prior entries)

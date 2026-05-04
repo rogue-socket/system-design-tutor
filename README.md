@@ -66,12 +66,15 @@ references/
 assets/
   workspace-README.md                 # User-facing workspace docs
   progress-template.json              # Initial progress state
-  exercise-templates/                 # Python scaffolds for exercises
+  exercise-templates/                 # Python scaffolds (A/B/C) + production-readiness template
 tests/
   test-triggering.md                  # Skill activation test cases
   test-routing.md                     # Mode routing test cases
   test-progress-json.md               # Progress state validation
+  test-practical-coverage.md          # Tier + required-tag breadth checks
   validate_progress.py                # JSON schema validator
+  run_all.py                          # Automated structural + schema test suite
+  fixtures/progress_valid.json        # Reference filled-in progress.json
 ```
 
 ## Requirements

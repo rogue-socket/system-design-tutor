@@ -363,4 +363,4 @@ Load only when the relevant mode is active:
 
 - `assets/workspace-README.md` — initial README copied to user's workspace
 - `assets/progress-template.json` — initial progress.json structure
-- `assets/exercise-templates/` — Python scaffolds for common exercise types
+- `assets/exercise-templates/` — Python scaffolds for common exercise types (Patterns A/B/C) plus `production-readiness-template.md` (copied into every exercise folder)
