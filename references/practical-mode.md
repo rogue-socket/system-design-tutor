@@ -218,5 +218,5 @@ When the user runs `make experiment`, they *see* the difference. That's the whol
 ## Cross-references
 
 - For exercise ideas by topic, see `references/exercise-bank.md`.
-- For starter scaffolds, see `assets/exercise-templates/`.
+- For starter scaffolds, see `assets/exercise-templates/` — Patterns A, B, and C only. **Patterns D (multi-container) and E (failure injection) are inline-only**: when an exercise needs them, generate the `docker-compose.yml` / signal-based kill / `tc` wrapper / proxy code directly in the exercise's own folder. Avoiding cross-platform Docker scaffolding keeps the skill portable.
 - For the production-readiness checklist, copy `assets/exercise-templates/production-readiness-template.md` into the exercise folder as `production-readiness.md`.
