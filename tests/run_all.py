@@ -164,6 +164,19 @@ TIER6_REQUIRED_SOURCES = [
 ]
 
 
+TIER6_REQUIRED_TOPICS = [
+    "Circuit breakers",
+    "Retries",
+    "Timeouts",
+    "Bulkheads",
+    "Rate limiting",
+    "Graceful degradation",
+    "SLA",
+    "Chaos engineering",
+    "Observability",
+]
+
+
 def test_tier6_has_primary_sources_block():
     """Tier 6 must list the five primary sources (issue #5)."""
     text = (REFS / "curriculum.md").read_text()
@@ -172,6 +185,26 @@ def test_tier6_has_primary_sources_block():
     body = tier6.group(0)
     for src in TIER6_REQUIRED_SOURCES:
         assert src in body, f"Tier 6 missing primary source: {src}"
+
+
+def test_tier6_every_topic_has_a_citation():
+    """Every Tier 6 bullet must carry at least one specific citation."""
+    text = (REFS / "curriculum.md").read_text()
+    tier6 = re.search(r"Per-item references:\n\n(.+?)(?=\n## |\Z)", text, re.DOTALL)
+    assert tier6, "curriculum.md Tier 6 missing 'Per-item references:' block"
+    body = tier6.group(1)
+    # Each topic line should mention at least one citation marker (book/blog/Ch).
+    for topic in TIER6_REQUIRED_TOPICS:
+        line_match = re.search(rf"\*\*{re.escape(topic)}.*", body)
+        assert line_match, f"Tier 6 missing topic line for: {topic}"
+        line = line_match.group(0)
+        # A citation is anything pointing at a named source — book title, "Ch", "blog", etc.
+        has_citation = any(marker in line for marker in (
+            "Ch ", "Workbook", "SRE Book", "Release It!", "Microservices",
+            "Engineering", "Blog", "blog", "Hystrix", "OpenTelemetry",
+            "Stripe", "Cloudflare", "Netflix", "AWS",
+        ))
+        assert has_citation, f"Tier 6 topic '{topic}' has no specific citation: {line!r}"
 
 
 def test_progress_test_doc_validator_in_sync():
@@ -208,6 +241,7 @@ TESTS_LIST = [
     ("SKILL.md: required frontmatter present", test_skill_md_has_required_frontmatter),
     ("incidents.md: covers main tiers", test_incidents_md_covers_main_tiers),
     ("curriculum: Tier 6 has primary sources block", test_tier6_has_primary_sources_block),
+    ("curriculum: Tier 6 every topic has a citation", test_tier6_every_topic_has_a_citation),
     ("docs/validator: in sync", test_progress_test_doc_validator_in_sync),
 ]
 
