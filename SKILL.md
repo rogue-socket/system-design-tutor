@@ -67,7 +67,7 @@ Tell the user what you're doing, briefly:
 Then:
 1. Create `~/system-design/` and subdirectories: `notes/`, `notes/diagrams/`, `exercises/`, `reviews/`, `flashcards/`, `meta/`
 2. Copy `assets/workspace-README.md` to `~/system-design/README.md`
-3. Initialize `~/system-design/progress.json` from `assets/progress-template.json`, replacing every `REPLACE_WITH_TODAY` placeholder with today's date (currently `user.started` and `practical_coverage.last_updated`) and filling in `user.level` ("intermediate") and `user.preferred_language` ("python")
+3. Initialize `~/system-design/progress.json` from `assets/progress-template.json`, replacing every `REPLACE_WITH_TODAY` placeholder with today's date (currently `user.started` and `practical_coverage.last_updated`) and filling in `user.level` ("intermediate"). Ask the user for their default language for exercises ("python / go / typescript / other — you can override per exercise") and save the answer to `user.preferred_language`. This is just the default; exercises always confirm.
 4. Initialize `~/system-design/session-state.md` (see `references/session-control.md` for schema)
 
 ### Step 2: Run the diagnostic
