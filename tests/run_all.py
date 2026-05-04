@@ -207,6 +207,42 @@ def test_tier6_every_topic_has_a_citation():
         assert has_citation, f"Tier 6 topic '{topic}' has no specific citation: {line!r}"
 
 
+def test_production_readiness_template_exists():
+    """The production-readiness template must exist as a copy-able asset (issue #7)."""
+    tpl = ASSETS / "exercise-templates" / "production-readiness-template.md"
+    assert tpl.exists(), "missing assets/exercise-templates/production-readiness-template.md"
+    body = tpl.read_text()
+    for section in ("Metrics to emit", "Alerts to configure", "Runbook entries",
+                    "Capacity", "Cost", "Rollout"):
+        assert section in body, f"production-readiness template missing section: {section}"
+
+
+def test_practical_mode_documents_production_readiness():
+    """practical-mode.md must document the production-readiness file in the exercise structure
+    AND include the Socratic fill-in step in the 'When they finish' workflow."""
+    text = (REFS / "practical-mode.md").read_text()
+    assert "production-readiness.md" in text, \
+        "practical-mode.md must mention production-readiness.md in the exercise folder layout"
+    finish = re.search(r"## Workflow when they finish.+?(?=\n## )", text, re.DOTALL)
+    assert finish, "practical-mode.md missing 'Workflow when they finish' section"
+    body = finish.group(0)
+    assert "production-readiness" in body.lower(), \
+        "'When they finish' workflow must include the production-readiness fill-in step"
+    assert "Socratic" in body or "socratic" in body, \
+        "'When they finish' must call out the Socratic fill-in approach"
+
+
+def test_exercise_bank_has_production_readiness_focus_contract():
+    """exercise-bank.md metadata contract must include production_readiness_focus,
+    and at least 3 exercises must populate it."""
+    text = (REFS / "exercise-bank.md").read_text()
+    assert "production_readiness_focus" in text, \
+        "exercise-bank.md must declare production_readiness_focus in the metadata contract"
+    populated = len(re.findall(r"\*\*production_readiness_focus\*\*", text))
+    assert populated >= 3, \
+        f"expected production_readiness_focus on at least 3 exercises, found {populated}"
+
+
 def test_progress_test_doc_validator_in_sync():
     """The validator inlined in test-progress-json.md should not be drastically out of date."""
     doc = (TESTS / "test-progress-json.md").read_text()
@@ -242,6 +278,9 @@ TESTS_LIST = [
     ("incidents.md: covers main tiers", test_incidents_md_covers_main_tiers),
     ("curriculum: Tier 6 has primary sources block", test_tier6_has_primary_sources_block),
     ("curriculum: Tier 6 every topic has a citation", test_tier6_every_topic_has_a_citation),
+    ("assets: production-readiness template exists", test_production_readiness_template_exists),
+    ("practical-mode: documents production-readiness", test_practical_mode_documents_production_readiness),
+    ("exercise-bank: production_readiness_focus contract", test_exercise_bank_has_production_readiness_focus_contract),
     ("docs/validator: in sync", test_progress_test_doc_validator_in_sync),
 ]
 
