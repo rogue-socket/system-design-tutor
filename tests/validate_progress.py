@@ -5,7 +5,7 @@ from datetime import datetime
 
 
 REQUIRED_TOP_LEVEL = ["user", "course_position", "current_session", "topics", "flashcards", "exercises_completed", "session_log", "event_log", "practical_coverage"]
-REQUIRED_USER_FIELDS = ["started", "level", "preferred_language", "practice_preference"]
+REQUIRED_USER_FIELDS = ["started", "level", "goal", "preferred_language", "practice_preference"]
 REQUIRED_COURSE_POSITION_FIELDS = ["current_step", "next_planned_steps", "deviations", "completed_steps"]
 REQUIRED_SESSION_FIELDS = ["active", "started_at", "last_checkpoint", "mode", "topic"]
 VALID_TOPIC_STATUS = {"not-started", "in-progress", "needs-review", "complete"}
@@ -50,6 +50,10 @@ def validate_progress(p):
                 errors.append(str(e))
         if "practice_preference" in p["user"] and p["user"]["practice_preference"] not in VALID_PRACTICE_PREFERENCE:
             errors.append(f"user.practice_preference invalid: {p['user']['practice_preference']!r}")
+        if "goal" in p["user"]:
+            g = p["user"]["goal"]
+            if not isinstance(g, str) or not g.strip():
+                errors.append(f"user.goal must be a non-empty string, got {g!r}")
 
     if "course_position" in p:
         for f in REQUIRED_COURSE_POSITION_FIELDS:
