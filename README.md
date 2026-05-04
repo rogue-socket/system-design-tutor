@@ -54,6 +54,7 @@ The skill creates a workspace at `~/system-design/` where it stores your progres
 
 ```
 SKILL.md                              # Router and session controller
+LICENSE                               # MIT license
 references/
   curriculum.md                       # Full topic tree (8 tiers, mapped to DDIA chapters)
   theory-modes.md                     # Flowcharts, mindmaps, flashcards, Socratic mode
