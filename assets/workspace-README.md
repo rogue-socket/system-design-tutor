@@ -54,6 +54,7 @@ Claude cites chapters/sections when relevant, and pulls from elsewhere when need
 - Trust the drive. Claude has the curriculum; you don't need to plan.
 - For exercises, *run the code*. The lesson is in the failure modes you observe.
 - If something feels rushed or too slow, say so. The pace adapts.
+- Your default language for exercises is set during onboarding and stored in `progress.json`. You can change it any time — it's just a starting point, and Claude confirms before each exercise.
 - Keep a `meta/gripes.md` of things that annoyed you. Tell Claude about them periodically — that's how the skill gets better for you specifically.
 
 ## Resetting

@@ -332,6 +332,10 @@ Don't drag this out. A 10-card session should take 10 minutes max.
 ## Implementation note
 
 You don't need to actually run Python to do this math — just compute it inline and write the updated JSON back to disk. Use the workspace's filesystem tools (Read, Write, Edit) directly.
+**`user.preferred_language`** (captured during First-Time Onboarding Step 1):
+- The user's default language for practical exercises (e.g., `python`, `go`, `typescript`, or any free-form string). May be `null` before onboarding completes.
+- This is a *default*, not a lock — `references/practical-mode.md` requires confirming the language at the start of every exercise.
+
 **`user.practice_preference`**:
 - `low`: mostly theory; exercises on request
 - `medium`: balanced theory + practical
