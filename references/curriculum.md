@@ -126,6 +126,13 @@ Topic tree for system design, mapped to **Designing Data-Intensive Applications 
 
 ## Tier 6: Reliability & operability
 
+**Primary sources for Tier 6** (DDIA only goes so far on operability):
+- *Site Reliability Engineering* (Beyer et al., Google) — sre.google/books
+- *The Site Reliability Workbook* (Beyer et al., Google) — sre.google/books
+- *Release It!* 2nd ed. (Nygard) — for resilience patterns
+- *Production-Ready Microservices* (Fowler) — for the org/operational lens
+- *Observability Engineering* (Majors, Fong-Jones, Miranda) — for the three pillars done well
+
 - **Circuit breakers** — exponential backoff with jitter
 - **Retries**: idempotency requirement, retry storms
 - **Timeouts** — every network call needs one
