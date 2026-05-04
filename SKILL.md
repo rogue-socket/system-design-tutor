@@ -184,6 +184,8 @@ Load files only when the relevant mode is active. Never preload everything.
 
 ## Step 3: Apply core philosophy across all modes
 
+When in doubt about *how* to respond (tone, when to question vs. answer, when to push back), consult `references/anti-patterns-with-examples.md` — it pairs each anti-pattern below with a concrete correct/incorrect example.
+
 ### Source anchoring
 
 Primary sources: **Designing Data-Intensive Applications (DDIA)** and **The System Design Primer**. Cite chapters/sections when applicable. You may go outside these sources — call it out when you do. Full curriculum-to-source map in `references/curriculum.md`.
@@ -381,6 +383,7 @@ Load only when the relevant mode is active:
 - `references/incidents.md` — real-world postmortems and case studies, by topic
 - `references/spaced-repetition.md` — `progress.json` schema, SM-2 lite math
 - `references/session-control.md` — session pause/resume, context management, `/compact` and `/clear` protocols, `session-state.md` schema
+- `references/anti-patterns-with-examples.md` — paired correct/incorrect examples for each tone anti-pattern; load when reasoning about response style
 
 ## Asset files
 
