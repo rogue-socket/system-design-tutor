@@ -15,6 +15,7 @@ For deterministic selection and scaling, new/updated entries should include:
 - `success_signals`: measurable pass checks
 - `next_if_done`: recommended follow-up
 - `next_if_stuck`: simpler fallback or prerequisite refresh
+- `production_readiness_focus`: 1-2 sentences on which sections of `production-readiness.md` (metrics / alerts / runbook / capacity / cost / rollout) are the most teachable for this exercise. Used by the "When they finish" workflow in `practical-mode.md` to weight the Socratic fill-in.
 - `coverage_tags`: one or more tags from:
   - `tier1-storage`
   - `tier2-replication`
@@ -68,6 +69,7 @@ For deterministic selection and scaling, new/updated entries should include:
 - **Success**: Read-after-write from a follower sometimes returns stale data. Quantify lag.
 - **Then break it**: Make the user implement read-your-own-writes — route reads to leader for a window after a write.
 - **Common mistakes**: Trying to make replication synchronous before testing the async failure mode (you want them to *feel* the bug first).
+- **production_readiness_focus**: Emphasise lag metrics (replication lag p50/p95/p99, follower last-applied offset) and alerts on lag exceeding the read-your-own-writes window. Runbook should cover follower fallback (route reads to leader) and failover (promotion criteria, data-loss bound for async).
 
 ### Quorum reads/writes (Dynamo-style)
 - **Topic**: 2.2
@@ -94,6 +96,7 @@ For deterministic selection and scaling, new/updated entries should include:
 - **Success**: With 100k keys and 10 nodes, naive sharding moves ~50% of keys when adding a node. CH+vnodes moves ~10%.
 - **Visualize**: Generate a histogram of keys-per-node — virtual nodes should give much flatter distribution.
 - **Common mistakes**: Using Python's `hash()` (randomized per run); forgetting wraparound; too few virtual nodes.
+- **production_readiness_focus**: Emphasise key-distribution metrics (per-node load gauge, p99 imbalance) and a rebalance runbook (what to do when one node is hot, what to do mid-rebalance if a node falls behind). Cost angle is light; rollout angle (dual-write window during sharding strategy changes) is heavy.
 
 ### Hot-key handling
 - **Topic**: 3.1 (extension)
@@ -147,6 +150,7 @@ For deterministic selection and scaling, new/updated entries should include:
 - **Build**: A `RateLimiter` class with `allow(client_id) -> bool`. Refills tokens at a fixed rate.
 - **Success**: 1000 requests/sec from one client gets throttled to the configured rate; other clients are unaffected.
 - **Then extend**: Make it distributed (Redis-backed) and discuss the race conditions.
+- **production_readiness_focus**: Emphasise saturation alerts (denial rate, top-N denied clients, near-limit gauges) and graceful-degradation fallbacks (what happens when the rate-limiter itself is unavailable — fail open vs fail closed, and the security/availability trade). Cost angle is light; rollout (canary the new limit, monitor false-positive denials) is heavy.
 
 ### Distributed rate limiter with Redis
 - **Topic**: 6 reliability + distributed coordination
