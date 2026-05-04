@@ -46,14 +46,17 @@ Each exercise gets its own folder in `exercises/`:
 ```
 exercises/
 └── 2026-04-29-consistent-hashing/
-    ├── README.md           ← problem statement, goals, hints, common mistakes
-    ├── starter.py          ← scaffold with TODOs
-    ├── solution.py         ← reference solution (kept hidden until they finish)
-    ├── test_hashing.py     ← pytest tests
-    ├── experiment.py       ← runs the experiment that demonstrates the lesson
-    ├── notes.md            ← user's notes, generated/updated as they go
-    └── Makefile            ← `make run`, `make test`, `make experiment`
+    ├── README.md                  ← problem statement, goals, hints, common mistakes
+    ├── starter.py                 ← scaffold with TODOs
+    ├── solution.py                ← reference solution (kept hidden until they finish)
+    ├── test_hashing.py            ← pytest tests
+    ├── experiment.py              ← runs the experiment that demonstrates the lesson
+    ├── notes.md                   ← user's notes, generated/updated as they go
+    ├── production-readiness.md    ← metrics/alerts/runbook/capacity/cost/rollout (filled together at the end)
+    └── Makefile                   ← `make run`, `make test`, `make experiment`
 ```
+
+The `production-readiness.md` file is copied from `assets/exercise-templates/production-readiness-template.md` when the exercise folder is created. Leave the sections empty until the "When they finish" workflow — that's where it gets filled in Socratically.
 
 Naming: `YYYY-MM-DD-<topic>` so the user has a chronological record.
 
@@ -103,12 +106,14 @@ The user codes; you stay available. Two failure modes to watch for:
 3. **Compare to reference solution.** Highlight 1-2 things the reference does differently and *why*. Their solution may be better — say so.
 4. **Add a stress test.** Crank up the scale or inject a failure. Things often break.
 5. **Write up `notes.md`** with: what they built, what tripped them up, what they learned, and what to revisit. This is what the SR system surfaces later.
-6. **Update `progress.json`**: mark the exercise complete, log the topic, add weak spots.
+6. **Fill the production-readiness checklist together.** Don't make them write `production-readiness.md` solo — use it as a Socratic prompt. "What metric would have caught this kind of skew before it caused an outage?" / "What does the rollback look like if this rate-limiter starts denying valid traffic?" Reference the exercise's `production_readiness_focus` (from `exercise-bank.md`) to know which sections to lean on hardest. The point is to internalise the checklist, not produce the document.
+7. **Update `progress.json`**: mark the exercise complete, log the topic, add weak spots.
    - Append events to `event_log` for `exercise_started`, `exercise_checkpoint`, `exercise_completed` (append-only; never delete old events).
-7. **Apply graduation gates before increasing difficulty**:
+8. **Apply graduation gates before increasing difficulty**:
    - Tests or measurable success criteria passed
    - User can explain at least one key trade-off
    - User handles one adversarial/failure case
+   - `production-readiness.md` has at least the "Metrics to emit" and "Alerts to configure" sections filled (other sections are encouraged but not gating)
 
 ## Common exercise patterns
 
@@ -212,3 +217,4 @@ When the user runs `make experiment`, they *see* the difference. That's the whol
 
 - For exercise ideas by topic, see `references/exercise-bank.md`.
 - For starter scaffolds, see `assets/exercise-templates/`.
+- For the production-readiness checklist, copy `assets/exercise-templates/production-readiness-template.md` into the exercise folder as `production-readiness.md`.
