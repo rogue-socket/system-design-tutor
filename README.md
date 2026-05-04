@@ -81,7 +81,7 @@ tests/
 
 ## License
 
-MIT
+MIT — see [LICENSE](./LICENSE).
 
 ## Publish (Both Places)
 
