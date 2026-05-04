@@ -207,6 +207,50 @@ def test_tier6_every_topic_has_a_citation():
         assert has_citation, f"Tier 6 topic '{topic}' has no specific citation: {line!r}"
 
 
+def test_template_has_goal_field():
+    """user.goal must be present in the template (placeholder OK; onboarding fills it)."""
+    data = json.loads((ASSETS / "progress-template.json").read_text())
+    assert "goal" in data["user"], "template missing user.goal"
+    assert isinstance(data["user"]["goal"], str), "user.goal must be a string"
+
+
+def test_validator_requires_goal():
+    """Removing user.goal from a known-valid fixture should fail validation."""
+    fixture = json.loads((TESTS / "fixtures" / "progress_valid.json").read_text())
+    del fixture["user"]["goal"]
+    import tempfile
+    with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as f:
+        json.dump(fixture, f)
+        tmp = f.name
+    r = subprocess.run(
+        [sys.executable, str(TESTS / "validate_progress.py"), tmp],
+        capture_output=True, text=True,
+    )
+    assert r.returncode == 1, f"validator should reject missing user.goal, got rc={r.returncode}"
+    assert "goal" in r.stdout, f"validator output should mention goal: {r.stdout}"
+
+
+def test_skill_md_captures_goal_during_onboarding():
+    """SKILL.md First-Time Onboarding must ask for and save user.goal."""
+    skill = (ROOT / "SKILL.md").read_text()
+    onboarding = re.search(r"## First-Time Onboarding.+?(?=\n## )", skill, re.DOTALL)
+    assert onboarding, "SKILL.md missing First-Time Onboarding section"
+    body = onboarding.group(0)
+    assert "user.goal" in body or "progress.json.user.goal" in body, \
+        "First-Time Onboarding must reference user.goal"
+
+
+def test_skill_md_diagnostic_count_matches_questions():
+    """The diagnostic framing should match the actual number of questions listed."""
+    skill = (ROOT / "SKILL.md").read_text()
+    diag = re.search(r"### Step 2: Run the diagnostic.+?(?=\n### |\n## )", skill, re.DOTALL)
+    assert diag, "SKILL.md missing diagnostic section"
+    body = diag.group(0)
+    questions = re.findall(r"^\d+\.\s+\*\*[\w\s]+\*\*:", body, re.MULTILINE)
+    assert len(questions) == 8, f"expected 8 diagnostic questions, found {len(questions)}"
+    assert "6-8" not in body, "diagnostic framing still says '6-8' but lists exactly 8 questions"
+
+
 def test_practical_mode_declares_d_e_inline_only():
     """practical-mode.md must explicitly state Patterns D and E are inline-only,
     so the docs match the actual contents of assets/exercise-templates/."""
@@ -297,6 +341,10 @@ TESTS_LIST = [
     ("incidents.md: covers main tiers", test_incidents_md_covers_main_tiers),
     ("curriculum: Tier 6 has primary sources block", test_tier6_has_primary_sources_block),
     ("curriculum: Tier 6 every topic has a citation", test_tier6_every_topic_has_a_citation),
+    ("template: has user.goal field", test_template_has_goal_field),
+    ("validator: requires user.goal", test_validator_requires_goal),
+    ("SKILL.md: captures goal during onboarding", test_skill_md_captures_goal_during_onboarding),
+    ("SKILL.md: diagnostic count matches questions", test_skill_md_diagnostic_count_matches_questions),
     ("practical-mode: declares D/E inline-only", test_practical_mode_declares_d_e_inline_only),
     ("practical-mode: no hardcoded python default", test_practical_mode_does_not_hardcode_python_default),
     ("assets: production-readiness template exists", test_production_readiness_template_exists),
