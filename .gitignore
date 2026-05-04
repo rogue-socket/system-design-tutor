@@ -1,0 +1,19 @@
+# Build artifact — regenerated for marketplace upload
+system-design-tutor.zip
+
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Editors
+.idea/
+.vscode/
+
+# Logs / scratch
+*.log
