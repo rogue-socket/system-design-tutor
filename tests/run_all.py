@@ -353,6 +353,10 @@ TESTS_LIST = [
     ("docs/validator: in sync", test_progress_test_doc_validator_in_sync),
 ]
 
+# SM-2 lite scheduler tests live in their own module; pull them in here.
+from test_spaced_repetition import TESTS_LIST as SR_TESTS  # noqa: E402
+TESTS_LIST.extend(SR_TESTS)
+
 
 def main():
     results = [run(name, fn) for name, fn in TESTS_LIST]
