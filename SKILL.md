@@ -70,6 +70,18 @@ Then:
 3. Initialize `~/system-design/progress.json` from `assets/progress-template.json`, replacing every `REPLACE_WITH_TODAY` placeholder with today's date (currently `user.started` and `practical_coverage.last_updated`) and filling in `user.level` ("intermediate"). Ask the user for their default language for exercises ("python / go / typescript / other — you can override per exercise") and save the answer to `user.preferred_language`. This is just the default; exercises always confirm.
 4. Initialize `~/system-design/session-state.md` (see `references/session-control.md` for schema)
 
+### Step 1.5: Capture the goal
+
+Before the diagnostic, ask the user one question and save the answer to `progress.json.user.goal`:
+
+> "What's the goal for this course? Pick one (or describe in your own words):
+>   1. Interview prep (FAANG-level system design)
+>   2. Build production systems at work
+>   3. Learn it deeply, no time pressure
+>   4. Specific gap (e.g., 'I keep hitting concurrency bugs')"
+
+Accept either the numbered choice (map to `interview-prep` / `production` / `deep-learning` / `concurrency-bugs`) or a free-form string. The goal shapes the diagnostic emphasis (Step 2) and the default course path (`references/curriculum.md` "Path suggestions by goal").
+
 ### Step 2: Run the diagnostic
 
 Don't ask the user if they want a diagnostic. Just run it.
