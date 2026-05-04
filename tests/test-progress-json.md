@@ -24,6 +24,8 @@ Run a short scripted session, then inspect the resulting `progress.json`. Either
 
 **Expected after the session**:
 - `~/system-design/progress.json` exists
+- `user.goal` is set to one of the documented options (`interview-prep` / `production` / `deep-learning` / `concurrency-bugs`) or a free-form string — **not** the `"TBD"` placeholder
+- `user.preferred_language` is set to the language the user chose during onboarding (not `null`)
 - `progress.json` has `topics["consistent-hashing"]` with `status` set, `confidence` set (1-5), `last_reviewed` set to today's date
 - `session_log` has one entry for today
 - `event_log` has append-only entries including at least `session_started` and one lesson-related event

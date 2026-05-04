@@ -18,7 +18,7 @@ Paste each prompt into a fresh session with the skill installed. Check the respo
 
 | # | Prompt | Expected mode |
 |---|--------|---------------|
-| R1 | "Start the course" (no workspace exists) | First-Time Onboarding (creates workspace, runs diagnostic) |
+| R1 | "Start the course" (no workspace exists) | First-Time Onboarding (creates workspace, asks for default language and goal, runs 8-question diagnostic weighted by goal) |
 | R2 | "Continue" (workspace exists, session-state.md exists) | Warm Resume (proposes next step from state) |
 | R3 | "Continue" (workspace exists, no session-state.md) | Cold Resume (lighter recalibration) |
 | R4 | "Teach me consistent hashing" (mid-course) | Theory mode, queue current path step |
