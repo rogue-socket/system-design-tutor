@@ -1,6 +1,6 @@
 # Practical Mode
 
-How to run **runnable code exercises** so the user actually builds and breaks systems instead of just reading about them. Default language is Python, but ask before each exercise — the user said "anything should work."
+How to run **runnable code exercises** so the user actually builds and breaks systems instead of just reading about them. The default language is whatever the user set in `progress.json.user.preferred_language` during onboarding. Confirm at the start of each exercise; switching is fine but slows setup.
 
 If the user asks for more practice ("another exercise", "more coding", "harder one", "easier one"), stay in practical mode by default for the next 1-3 sessions before returning to theory unless they explicitly ask to switch.
 
@@ -69,7 +69,7 @@ Naming: `YYYY-MM-DD-<topic>` so the user has a chronological record.
 
 ## Workflow when starting an exercise
 
-1. **Confirm topic + language.** "Consistent hashing exercise — Python OK or want to try this in Go?"
+1. **Confirm topic and confirm language.** Read `progress.json.user.preferred_language` and ask: "Doing this in [lang], or want to switch?" If `preferred_language` is unset, ask the user to pick now and save it to `progress.json`.
 2. **Confirm prereqs.** Check `progress.json`. If they haven't covered something the exercise needs, warn them.
    - Also read `progress.json.user.practice_preference` (`low|medium|high`) and size exercise scope accordingly.
 3. **Set up the folder.** Create the structure above.
