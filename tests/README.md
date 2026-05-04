@@ -48,7 +48,7 @@ That's a tighter feedback loop than building elaborate evals.
 python tests/run_all.py
 ```
 
-Runs `validate_progress.py` against the template and `fixtures/progress_valid.json`, plus structural checks: curriculum step IDs, exercise-bank coverage tags, SKILL.md frontmatter and references, incidents.md tier coverage, doc/validator sync, Tier 6 primary-sources + per-item citations, the production-readiness template existing alongside `practical-mode.md` documenting it and `exercise-bank.md` declaring `production_readiness_focus` with at least 3 populated entries, and `practical-mode.md` not hardcoding a language default. All pass = the skill's mechanical scaffolding is intact.
+Runs `validate_progress.py` against the template and `fixtures/progress_valid.json`, plus structural checks: curriculum step IDs, exercise-bank coverage tags, SKILL.md frontmatter and references, incidents.md tier coverage, doc/validator sync, Tier 6 primary-sources + per-item citations, the production-readiness template existing alongside `practical-mode.md` documenting it and `exercise-bank.md` declaring `production_readiness_focus` with at least 3 populated entries, `practical-mode.md` not hardcoding a language default, and `practical-mode.md` declaring Patterns D and E inline-only (matching the actual contents of `assets/exercise-templates/`). All pass = the skill's mechanical scaffolding is intact.
 
 ### Manual (behavioral / triggering)
 

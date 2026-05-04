@@ -207,6 +207,16 @@ def test_tier6_every_topic_has_a_citation():
         assert has_citation, f"Tier 6 topic '{topic}' has no specific citation: {line!r}"
 
 
+def test_practical_mode_declares_d_e_inline_only():
+    """practical-mode.md must explicitly state Patterns D and E are inline-only,
+    so the docs match the actual contents of assets/exercise-templates/."""
+    text = (REFS / "practical-mode.md").read_text()
+    assert "inline-only" in text.lower(), "practical-mode.md must describe Pattern D/E as inline-only"
+    # Must mention both D and E in the inline-only declaration's vicinity.
+    assert re.search(r"Pattern[s]?\s+D.*E.*inline-only", text, re.IGNORECASE | re.DOTALL), \
+        "practical-mode.md must call out Pattern D and Pattern E as inline-only together"
+
+
 def test_practical_mode_does_not_hardcode_python_default():
     """practical-mode.md must not claim Python as a fixed default (issue #8)."""
     text = (REFS / "practical-mode.md").read_text()
@@ -287,6 +297,7 @@ TESTS_LIST = [
     ("incidents.md: covers main tiers", test_incidents_md_covers_main_tiers),
     ("curriculum: Tier 6 has primary sources block", test_tier6_has_primary_sources_block),
     ("curriculum: Tier 6 every topic has a citation", test_tier6_every_topic_has_a_citation),
+    ("practical-mode: declares D/E inline-only", test_practical_mode_declares_d_e_inline_only),
     ("practical-mode: no hardcoded python default", test_practical_mode_does_not_hardcode_python_default),
     ("assets: production-readiness template exists", test_production_readiness_template_exists),
     ("practical-mode: documents production-readiness", test_practical_mode_documents_production_readiness),
