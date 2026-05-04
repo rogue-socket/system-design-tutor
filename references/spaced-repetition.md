@@ -362,10 +362,22 @@ This is append-only history. Do not remove or rewrite older events.
 
 ### Difficulty adaptation policy
 
-When picking the next practical exercise:
-- If `observed_difficulty` > `planned_difficulty` or `hints_used_max_level >= 3`, downshift next exercise by one level.
-- If `observed_difficulty` < `planned_difficulty`, `hints_used_max_level <= 1`, and success criteria were met quickly, offer harder variant or `stretch/chaos`.
-- If repeated mismatch persists for 2+ exercises, hold difficulty constant and switch modality (e.g., theory mini-lesson + core-only practical).
+This is the canonical rule. `references/exercise-bank.md` and `references/practical-mode.md` point here when picking the next practical exercise.
+
+**Window:** the last 2 entries in `progress.json.exercises_completed` for the same topic family (fall back to the last 2 entries overall if the topic has fewer than 2). Difficulty levels are ordered `easy < medium < hard`.
+
+**Rules:**
+- If both entries have `observed_difficulty > planned_difficulty`, *or* either has `hints_used_max_level >= 3`: downshift the next exercise's `planned_difficulty` by one level (floor at `easy`).
+- If both entries have `observed_difficulty < planned_difficulty`, both have `hints_used_max_level <= 1`, and success criteria were met quickly: upshift by one level (ceiling at `hard`), or offer `stretch/chaos` at the same level.
+- If the two entries disagree (one harder than planned, one easier): hold `planned_difficulty` constant and switch modality — short theory refresher or a core-only practical at the same level.
+- Single-entry history: use pre-flight calibration only; do not adjust on one data point.
+
+**Surfacing the adjustment:** when the rule triggers a shift, say it in one short sentence before proposing the exercise. Templates:
+- Downshift: "Last two felt harder than I planned — easing this one."
+- Upshift: "Last two were comfortable — bumping this up a notch."
+- Modality switch: "Mixed signals on the last two — short theory pass first, then a core-only build."
+
+**Override:** an explicit user request ("give me a harder one", "make it easier") wins over this rule. Log the override in the next exercise's notes so the calibration window doesn't misread it.
 
 ### Coverage policy (core product quality)
 

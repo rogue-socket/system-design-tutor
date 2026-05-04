@@ -131,6 +131,35 @@ Run a short scripted session, then inspect the resulting `progress.json`. Either
 - State is written to disk *before* the suggestion
 - After compaction, "continue" should pick up cleanly
 
+### Scenario G: Difficulty calibration readback
+
+Tests the **read** side of calibration — the counterpart to Scenario B's write side. Verifies that `references/spaced-repetition.md` → "Difficulty adaptation policy" actually fires when the user asks for the next exercise.
+
+**Setup**: hand-edit (or seed via fixture) a `progress.json` so `exercises_completed` ends with two entries on the same topic where `observed_difficulty` exceeds `planned_difficulty`, e.g.:
+
+```json
+{ "topic": "consistent-hashing", "planned_difficulty": "medium", "observed_difficulty": "hard", "hints_used_max_level": 3, "attempt_count": 2 },
+{ "topic": "consistent-hashing", "planned_difficulty": "medium", "observed_difficulty": "hard", "hints_used_max_level": 2, "attempt_count": 1 }
+```
+
+**Prompts**:
+
+```
+1. "Give me another exercise on consistent hashing."
+```
+
+**Expected**:
+- The tutor's proposal sentence acknowledges the adjustment, matching the downshift template (e.g., "Last two felt harder than I planned — easing this one.").
+- The new exercise's `planned_difficulty` (recorded in `exercises_completed` after the user accepts and starts) is `easy`, one notch below the prior `medium`.
+- The topic stays `consistent-hashing`; only difficulty/scope changes.
+- If the user explicitly says "no, give me a hard one anyway", the override wins and a note records the override in the new entry.
+
+**Mirror cases (run if time permits)**:
+- Two entries with `observed_difficulty < planned_difficulty` and `hints_used_max_level <= 1` → upshift by one notch with the upshift template.
+- One entry harder, one easier → no shift; tutor proposes a short theory pass plus a core-only practical at the same level.
+
+**Pass criteria**: the surfacing sentence is present and the next-exercise `planned_difficulty` matches the rule. If the proposal is silent or `planned_difficulty` is unchanged when the rule should have triggered, the loop is broken.
+
 ## Schema validator script
 
 The canonical validator lives at `tests/validate_progress.py`. It validates every required top-level field (`user`, `course_position`, `current_session`, `topics`, `flashcards`, `exercises_completed`, `session_log`, `event_log`, `practical_coverage`) plus per-field shape and value constraints.

@@ -232,12 +232,13 @@ When the user asks "give me an exercise" or "let me practice X":
 
 1. Check `progress.json` for completed exercises and weak spots.
    - Also check `user.practice_preference` (`low|medium|high`) to pick scope and challenge.
-2. Pick something matching their current topic, prerequisites met, that they haven't done.
+2. **Consult recent calibration.** Read the last 2 entries in `progress.json.exercises_completed`. Apply the rule in `references/spaced-repetition.md` → "Difficulty adaptation policy" to set the candidate's `planned_difficulty` *before* matching against the bank. If the rule triggers an adjustment, surface it in one short sentence (e.g., "Last two felt harder than I planned — easing this one."). User-requested overrides ("harder"/"easier") take precedence over the rule.
+3. Pick something matching their current topic, prerequisites met, that they haven't done.
    - If they asked for "another/harder/easier" exercise, stay in practical mode and honor requested difficulty.
    - Keep concept fixed when shifting difficulty; only change scope/constraints.
-3. State the time estimate honestly: "This is ~2 hours including the experiment."
-4. Confirm scope: "We can do the basic version (1 hour) or include failure injection (3 hours). Which?"
-5. Set it up using `practical-mode.md`.
+4. State the time estimate honestly: "This is ~2 hours including the experiment."
+5. Confirm scope: "We can do the basic version (1 hour) or include failure injection (3 hours). Which?"
+6. Set it up using `practical-mode.md`.
 
 ## Coverage-first selection rule
 

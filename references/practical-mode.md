@@ -12,7 +12,7 @@ Before generating exercise code, run this loop:
    - Concept check: one short "why/when" question on the target concept.
    - Coding comfort check: ask if they can implement the core data structure/protocol without template hand-holding.
    - Tooling comfort check: verify comfort with `pytest`, `asyncio`/`multiprocessing`, or Docker if needed.
-2. **Set planned difficulty**
+2. **Set planned difficulty** — combine pre-flight signals with calibration history (last 2 `progress.json.exercises_completed` entries; apply the rule in `references/spaced-repetition.md` → "Difficulty adaptation policy"). If history and pre-flight disagree, prefer history. User overrides ("easier"/"harder") trump both.
    - `easy`: smaller scope, fewer moving parts, stronger scaffolding.
    - `medium`: standard exercise path.
    - `hard`: full constraints, less scaffolding, adversarial cases.
