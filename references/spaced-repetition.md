@@ -116,7 +116,7 @@ Located at the workspace root. Here's the full schema:
     ],
     "coverage_score": 0.33,
     "last_updated": "2026-04-30"
-  ]
+  }
 }
 ```
 
