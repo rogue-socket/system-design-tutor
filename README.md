@@ -91,7 +91,7 @@ This skill can be published in:
 
 ### A) Publish to Claude Skills
 
-1. Package the skill folder as a zip:
+1. Package the skill folder as a zip (build artifact — not committed; regenerated each publish):
 ```bash
 cd /path/to/parent
 zip -r system-design-tutor.zip system-design-tutor
