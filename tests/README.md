@@ -48,7 +48,7 @@ That's a tighter feedback loop than building elaborate evals.
 python tests/run_all.py
 ```
 
-Runs `validate_progress.py` against the template and `fixtures/progress_valid.json`, plus structural checks (curriculum step IDs, exercise-bank coverage tags, SKILL.md frontmatter and references, incidents.md tier coverage, doc/validator sync). All pass = the skill's mechanical scaffolding is intact.
+Runs `validate_progress.py` against the template and `fixtures/progress_valid.json`, plus structural checks: curriculum step IDs, exercise-bank coverage tags, SKILL.md frontmatter and references, incidents.md tier coverage, doc/validator sync, and Tier 6 carrying a primary-sources block plus a per-item citation on every reliability topic. All pass = the skill's mechanical scaffolding is intact.
 
 ### Manual (behavioral / triggering)
 
