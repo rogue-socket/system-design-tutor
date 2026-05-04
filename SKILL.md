@@ -74,7 +74,7 @@ Then:
 
 Don't ask the user if they want a diagnostic. Just run it.
 
-> "Before we start the course, I need to find your edge — where the foundations end and where the gaps begin. I'm going to ask 6-8 short questions across topics. Don't look anything up; rough answers are fine. We're calibrating, not testing."
+> "Before we start the course, I need to find your edge — where the foundations end and where the gaps begin. I'm going to ask 8 short questions across topics. Don't look anything up; rough answers are fine. We're calibrating, not testing."
 
 Then ask diagnostic questions one at a time. Cover these areas, ~1 question each, calibrated to intermediate level:
 
