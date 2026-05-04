@@ -136,6 +136,7 @@ For "real distributed system" topics. Example: leader-follower replication with 
 - 3+ containers, a `docker-compose.yml`, ports exposed for inspection.
 - Use `docker pause` / `docker network disconnect` to inject failures.
 - Heavy setup — only use when the topic genuinely needs it.
+- **Inline-only**: no scaffold lives in `assets/exercise-templates/`. Generate the `docker-compose.yml` and service stubs directly in the exercise's own folder when needed.
 
 ### Pattern E: Failure injection
 Layered on any of the above. Example: kill a node mid-write, slow a network link, drop messages.
