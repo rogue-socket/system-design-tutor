@@ -1,0 +1,99 @@
+{
+  "user": {
+    "started": "2026-04-29",
+    "level": "intermediate",
+    "goal": "interview-prep",
+    "preferred_language": "python",
+    "practice_preference": "medium"
+  },
+  "course_position": {
+    "current_step": "P3",
+    "current_step_title": "Hot keys, secondary indexes, scatter/gather",
+    "next_planned_steps": ["P4", "P5"],
+    "deviations": [],
+    "completed_steps": ["F1", "F2", "S1", "S2", "P1", "P2"]
+  },
+  "current_session": {
+    "active": false,
+    "started_at": "2026-04-30T14:00:00",
+    "last_checkpoint": "2026-04-30T14:23:00",
+    "mode": "theory",
+    "topic": "consistent-hashing",
+    "needs_compaction_check": false
+  },
+  "topics": {
+    "consistent-hashing": {
+      "status": "in-progress",
+      "first_seen": "2026-04-29",
+      "last_reviewed": "2026-04-29",
+      "confidence": 3,
+      "notes": "Got the wraparound case wrong twice.",
+      "weak_points": ["wraparound when key hash > all node hashes"]
+    }
+  },
+  "flashcards": {
+    "consistent-hashing-001": {
+      "ease": 2.5,
+      "interval_days": 1,
+      "next_review": "2026-04-30",
+      "review_history": [{"date": "2026-04-29", "rating": 3}]
+    }
+  },
+  "exercises_completed": [
+    {
+      "topic": "consistent-hashing",
+      "folder": "exercises/2026-04-29-consistent-hashing",
+      "completed": "2026-04-29",
+      "notes": "Working impl. Took ~90 min.",
+      "planned_difficulty": "medium",
+      "observed_difficulty": "hard",
+      "hints_used_max_level": 2,
+      "attempt_count": 2
+    }
+  ],
+  "session_log": [
+    {
+      "date": "2026-04-29",
+      "duration_min": 75,
+      "topics": ["consistent-hashing"],
+      "type": "theory+exercise"
+    }
+  ],
+  "event_log": [
+    {
+      "ts": "2026-04-30T14:00:00",
+      "type": "session_started",
+      "topic": "consistent-hashing",
+      "details": "Warm resume"
+    },
+    {
+      "ts": "2026-04-30T14:23:00",
+      "type": "exercise_completed",
+      "topic": "consistent-hashing",
+      "details": "Completed main task and experiment"
+    }
+  ],
+  "practical_coverage": {
+    "tier_counts": {
+      "tier1-storage": 1,
+      "tier2-replication": 1,
+      "tier3-partitioning": 1,
+      "tier4-consistency": 0,
+      "tier5-messaging": 0,
+      "tier6-reliability": 0,
+      "tier7-specialized": 0,
+      "tier8-integration": 0
+    },
+    "required_tags_completed": [
+      "required-consistent-hashing",
+      "required-replication-lag"
+    ],
+    "required_tags_missing": [
+      "required-idempotency",
+      "required-distributed-rate-limiter",
+      "required-failure-injection"
+    ],
+    "coverage_score": 0.4,
+    "last_updated": "2026-04-30"
+  }
+}

@@ -130,88 +130,21 @@ Run a short scripted session, then inspect the resulting `progress.json`. Either
 
 ## Schema validator script
 
-Save this as `tests/validate_progress.py`:
+The canonical validator lives at `tests/validate_progress.py`. It validates every required top-level field (`user`, `course_position`, `current_session`, `topics`, `flashcards`, `exercises_completed`, `session_log`, `event_log`, `practical_coverage`) plus per-field shape and value constraints.
 
-```python
-"""Validate that progress.json conforms to the schema."""
-import json
-import sys
-from datetime import datetime
+Run it on a real `progress.json`:
 
-
-REQUIRED_TOP_LEVEL = ["user", "topics", "flashcards", "exercises_completed", "session_log"]
-REQUIRED_USER_FIELDS = ["started", "level", "preferred_language"]
-VALID_TOPIC_STATUS = {"not-started", "in-progress", "needs-review", "complete"}
-
-
-def validate_date(s, field):
-    try:
-        datetime.strptime(s, "%Y-%m-%d")
-    except (ValueError, TypeError):
-        raise AssertionError(f"{field} should be YYYY-MM-DD, got {s!r}")
-
-
-def validate_progress(p):
-    errors = []
-
-    for f in REQUIRED_TOP_LEVEL:
-        if f not in p:
-            errors.append(f"missing top-level field: {f}")
-
-    if "user" in p:
-        for f in REQUIRED_USER_FIELDS:
-            if f not in p["user"]:
-                errors.append(f"missing user.{f}")
-        if "started" in p["user"]:
-            try:
-                validate_date(p["user"]["started"], "user.started")
-            except AssertionError as e:
-                errors.append(str(e))
-
-    for topic_id, topic in p.get("topics", {}).items():
-        if "status" in topic and topic["status"] not in VALID_TOPIC_STATUS:
-            errors.append(f"topics.{topic_id}.status invalid: {topic['status']!r}")
-        if "confidence" in topic and not (1 <= topic["confidence"] <= 5):
-            errors.append(f"topics.{topic_id}.confidence out of range: {topic['confidence']}")
-        for date_field in ("first_seen", "last_reviewed"):
-            if date_field in topic:
-                try:
-                    validate_date(topic[date_field], f"topics.{topic_id}.{date_field}")
-                except AssertionError as e:
-                    errors.append(str(e))
-
-    for card_id, card in p.get("flashcards", {}).items():
-        for f in ("ease", "interval_days", "next_review"):
-            if f not in card:
-                errors.append(f"flashcards.{card_id} missing {f}")
-        if "ease" in card and not (1.3 <= card["ease"] <= 3.0):
-            errors.append(f"flashcards.{card_id}.ease out of expected range: {card['ease']}")
-        if "next_review" in card:
-            try:
-                validate_date(card["next_review"], f"flashcards.{card_id}.next_review")
-            except AssertionError as e:
-                errors.append(str(e))
-
-    for i, ex in enumerate(p.get("exercises_completed", [])):
-        for f in ("topic", "folder", "completed"):
-            if f not in ex:
-                errors.append(f"exercises_completed[{i}] missing {f}")
-
-    return errors
-
-
-if __name__ == "__main__":
-    path = sys.argv[1] if len(sys.argv) > 1 else "progress.json"
-    with open(path) as fp:
-        data = json.load(fp)
-    errs = validate_progress(data)
-    if errs:
-        print("INVALID:")
-        for e in errs:
-            print(f"  - {e}")
-        sys.exit(1)
-    print("VALID")
+```bash
+python tests/validate_progress.py ~/system-design/progress.json
 ```
+
+Or run the full automated suite (validator + structural checks):
+
+```bash
+python tests/run_all.py
+```
+
+A filled-in valid example is at `tests/fixtures/progress_valid.json` — use it as a reference for what a healthy `progress.json` looks like mid-course.
 
 ## Pass criteria
 

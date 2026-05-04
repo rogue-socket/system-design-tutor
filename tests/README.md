@@ -42,7 +42,17 @@ That's a tighter feedback loop than building elaborate evals.
 
 ## How to run the tests
 
-These tests are **prompt-and-check** style, not automated. The format:
+### Automated (mechanical / structural)
+
+```bash
+python tests/run_all.py
+```
+
+Runs `validate_progress.py` against the template and `fixtures/progress_valid.json`, plus structural checks (curriculum step IDs, exercise-bank coverage tags, SKILL.md frontmatter and references, incidents.md tier coverage, doc/validator sync). All pass = the skill's mechanical scaffolding is intact.
+
+### Manual (behavioral / triggering)
+
+The triggering, routing, and behavior tests below are **prompt-and-check** style. The format:
 
 1. Open the test file
 2. Read the prompts and expected behavior
