@@ -154,6 +154,26 @@ def test_incidents_md_covers_main_tiers():
         assert term in inc, f"incidents.md missing coverage of {term}"
 
 
+# Sources required to be cited under Tier 6 (issue #5).
+TIER6_REQUIRED_SOURCES = [
+    "Site Reliability Engineering",
+    "SRE Workbook",
+    "Release It!",
+    "Production-Ready Microservices",
+    "Observability Engineering",
+]
+
+
+def test_tier6_has_primary_sources_block():
+    """Tier 6 must list the five primary sources (issue #5)."""
+    text = (REFS / "curriculum.md").read_text()
+    tier6 = re.search(r"## Tier 6:.+?(?=\n## )", text, re.DOTALL)
+    assert tier6, "curriculum.md missing Tier 6 section"
+    body = tier6.group(0)
+    for src in TIER6_REQUIRED_SOURCES:
+        assert src in body, f"Tier 6 missing primary source: {src}"
+
+
 def test_progress_test_doc_validator_in_sync():
     """The validator inlined in test-progress-json.md should not be drastically out of date."""
     doc = (TESTS / "test-progress-json.md").read_text()
@@ -187,6 +207,7 @@ TESTS_LIST = [
     ("SKILL.md: referenced files exist", test_skill_md_references_exist),
     ("SKILL.md: required frontmatter present", test_skill_md_has_required_frontmatter),
     ("incidents.md: covers main tiers", test_incidents_md_covers_main_tiers),
+    ("curriculum: Tier 6 has primary sources block", test_tier6_has_primary_sources_block),
     ("docs/validator: in sync", test_progress_test_doc_validator_in_sync),
 ]
 
