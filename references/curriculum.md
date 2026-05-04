@@ -133,17 +133,19 @@ Topic tree for system design, mapped to **Designing Data-Intensive Applications 
 - *Production-Ready Microservices* (Fowler) — for the org/operational lens
 - *Observability Engineering* (Majors, Fong-Jones, Miranda) — for the three pillars done well
 
-- **Circuit breakers** — exponential backoff with jitter
-- **Retries**: idempotency requirement, retry storms
-- **Timeouts** — every network call needs one
-- **Bulkheads** — isolation of failure domains
-- **Rate limiting**: token bucket, leaky bucket, sliding window
-- **Graceful degradation** — fallbacks, feature flags
-- **SLA / SLO / SLI** — error budgets
-- **Chaos engineering** — failure injection
-- **Observability**: metrics, logs, traces (the three pillars), correlation IDs
+Per-item references:
 
-References: Primer §Performance vs scalability, §Availability vs consistency. Google SRE Book Ch 1-4 for the SLO material.
+- **Circuit breakers** — exponential backoff with jitter. Nygard, *Release It!* Ch 5; Hystrix design docs.
+- **Retries**: idempotency requirement, retry storms. AWS Architecture Blog "Exponential Backoff And Jitter"; *SRE Workbook* Ch 22 (Addressing Cascading Failures).
+- **Timeouts** — every network call needs one. Nygard, *Release It!* Ch 4; Google SRE Book Ch 22.
+- **Bulkheads** — isolation of failure domains. Nygard, *Release It!* Ch 5.
+- **Rate limiting**: token bucket, leaky bucket, sliding window. Stripe Engineering "Scaling your API with rate limiters"; Cloudflare "How we built rate limiting capable of scaling to millions of domains".
+- **Graceful degradation** — fallbacks, feature flags. Fowler, *Production-Ready Microservices* Ch 5; LaunchDarkly engineering blog.
+- **SLA / SLO / SLI** — error budgets. *SRE Workbook* Ch 1-3; Google SRE Book Ch 4.
+- **Chaos engineering** — failure injection. Netflix tech blog (Chaos Monkey); Rosenthal et al., *Chaos Engineering* (O'Reilly).
+- **Observability**: metrics, logs, traces (the three pillars), correlation IDs. Majors, Fong-Jones, Miranda, *Observability Engineering*; OpenTelemetry docs.
+
+Primer also relevant: §Performance vs scalability, §Availability vs consistency.
 
 ---
 
