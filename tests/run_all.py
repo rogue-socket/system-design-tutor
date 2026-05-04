@@ -207,6 +207,15 @@ def test_tier6_every_topic_has_a_citation():
         assert has_citation, f"Tier 6 topic '{topic}' has no specific citation: {line!r}"
 
 
+def test_practical_mode_does_not_hardcode_python_default():
+    """practical-mode.md must not claim Python as a fixed default (issue #8)."""
+    text = (REFS / "practical-mode.md").read_text()
+    assert "Default language is Python" not in text, \
+        "practical-mode.md still claims 'Default language is Python' as a fixed default"
+    assert "preferred_language" in text, \
+        "practical-mode.md must reference progress.json.user.preferred_language"
+
+
 def test_production_readiness_template_exists():
     """The production-readiness template must exist as a copy-able asset (issue #7)."""
     tpl = ASSETS / "exercise-templates" / "production-readiness-template.md"
@@ -278,6 +287,7 @@ TESTS_LIST = [
     ("incidents.md: covers main tiers", test_incidents_md_covers_main_tiers),
     ("curriculum: Tier 6 has primary sources block", test_tier6_has_primary_sources_block),
     ("curriculum: Tier 6 every topic has a citation", test_tier6_every_topic_has_a_citation),
+    ("practical-mode: no hardcoded python default", test_practical_mode_does_not_hardcode_python_default),
     ("assets: production-readiness template exists", test_production_readiness_template_exists),
     ("practical-mode: documents production-readiness", test_practical_mode_documents_production_readiness),
     ("exercise-bank: production_readiness_focus contract", test_exercise_bank_has_production_readiness_focus_contract),
