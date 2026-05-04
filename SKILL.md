@@ -88,6 +88,17 @@ Don't ask the user if they want a diagnostic. Just run it.
 
 > "Before we start the course, I need to find your edge — where the foundations end and where the gaps begin. I'm going to ask 8 short questions across topics. Don't look anything up; rough answers are fine. We're calibrating, not testing."
 
+**Weight emphasis by the goal captured in Step 1.5:**
+
+| Goal | Emphasis (which questions to probe deeper on if answers are thin) |
+|---|---|
+| `interview-prep` | All 8 — broad coverage; push slightly harder on consistency, queues, distributed reasoning |
+| `production` | Reliability, queues (idempotency / at-least-once), caching, distributed reasoning |
+| `deep-learning` | Replication, partitioning, consistency, numbers — the storage/consistency core |
+| `concurrency-bugs` | Consistency, distributed reasoning, queues — the ordering/transactions axis |
+
+Still ask all 8 questions; the goal only shifts which weak answers warrant a follow-up probe vs. a quick mental note.
+
 Then ask diagnostic questions one at a time. Cover these areas, ~1 question each, calibrated to intermediate level:
 
 1. **Replication**: "If you have a primary database with two async replicas and the primary fails, what's the trade-off when promoting a replica?"
