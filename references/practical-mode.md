@@ -141,6 +141,7 @@ For "real distributed system" topics. Example: leader-follower replication with 
 ### Pattern E: Failure injection
 Layered on any of the above. Example: kill a node mid-write, slow a network link, drop messages.
 - Use `signal` to kill processes, `tc` for network manipulation, or a wrapper proxy that injects faults.
+- **Inline-only**: no scaffold lives in `assets/exercise-templates/`. The kill-mid-write helpers, `tc`-based latency wrappers, and message-drop proxies are generated per exercise — `tc` is Linux-only, signal handling varies by platform, and there's no canonical layout.
 
 ## Picking the right pattern
 
