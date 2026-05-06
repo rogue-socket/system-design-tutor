@@ -155,7 +155,7 @@ Per-item references:
 - **Graceful degradation** — fallbacks, feature flags. Fowler, *Production-Ready Microservices* Ch 5; LaunchDarkly engineering blog.
 - **SLA / SLO / SLI** — error budgets. *SRE Workbook* Ch 1-3; Google SRE Book Ch 4.
 - **Chaos engineering** — failure injection. Netflix tech blog (Chaos Monkey); Rosenthal et al., *Chaos Engineering* (O'Reilly).
-- **Observability**: metrics, logs, traces (the three pillars), correlation IDs. Majors, Fong-Jones, Miranda, *Observability Engineering*; OpenTelemetry docs.
+- **Observability**: metrics, logs, traces (the three pillars), correlation IDs. Two mnemonics worth teaching: **USE** (utilization, saturation, errors — for system resources) and **RED** (rate, errors, duration — for request-driven services). Tool tiers: metrics — Prometheus, Graphite, Datadog; tracing — Zipkin, Jaeger, OpenTelemetry; high-cardinality / wide-event analytics — Honeycomb, Facebook Scuba, Humio. Sources: Majors, Fong-Jones, Miranda, *Observability Engineering*; Sridharan, *Distributed Systems Observability*.
 
 Primer also relevant: §Performance vs scalability, §Availability vs consistency.
 
