@@ -19,19 +19,13 @@ Distributed systems, storage & retrieval, replication, partitioning, transaction
 
 ## Installation
 
-Copy the `system-design-tutor` folder into your Claude Code skills directory:
+### Recommended: skills.sh CLI
 
 ```bash
-# Create the skills directory if it doesn't exist
-mkdir -p ~/.claude/skills
-
-# Clone and copy
-git clone https://github.com/rogue-socket/system-design-tutor.git /tmp/sdt-install
-cp -r /tmp/sdt-install ~/.claude/skills/system-design-tutor
-rm -rf /tmp/sdt-install
+npx skills add rogue-socket/system-design-tutor
 ```
 
-Or if you prefer a one-liner:
+### Manual install
 
 ```bash
 mkdir -p ~/.claude/skills && git clone https://github.com/rogue-socket/system-design-tutor.git ~/.claude/skills/system-design-tutor
