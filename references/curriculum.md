@@ -31,18 +31,21 @@ Topic tree for system design, mapped to **Designing Data-Intensive Applications 
 - **Prereqs**: SQL basics
 - **DDIA**: Ch 3 (Storage and Retrieval) — pp. 70-79 on hash indexes, SSTables, LSM-trees, B-trees
 - **Concepts**: hash indexes, SSTables, LSM-trees, B-trees, write amplification, compaction
+- **Real-world**: Bitcask (Riak's hash-index engine), LevelDB / RocksDB (LSM), HBase, Cassandra (LSM with size-tiered or leveled compaction); B-trees in Postgres / MySQL InnoDB; Bloom filters in LSM read paths.
 - **Understands when they can**: explain why LSM-trees write fast and read slow; explain bloom filters' role in LSM reads; reason about which to pick for a given workload.
 
 ### 1.2 OLTP vs OLAP, column stores
 - **Prereqs**: 1.1
 - **DDIA**: Ch 3 pp. 90-101
 - **Concepts**: row-oriented vs column-oriented storage, data warehousing, star schema
+- **Real-world**: Amazon Redshift, Google BigQuery (Dremel-derived), Apache Hive, Spark SQL, Impala, Presto, Drill; in-memory durables: VoltDB, MemSQL.
 - **Understands when they can**: explain why analytics queries on row stores are slow and how column stores fix that.
 
 ### 1.3 Data encoding & evolution
 - **Prereqs**: SQL basics
 - **DDIA**: Ch 4
 - **Concepts**: JSON/XML/binary formats, Protocol Buffers, Avro, Thrift, schema evolution, backward/forward compatibility
+- **Real-world**: Protocol Buffers (Google), Apache Thrift (Facebook), Apache Avro (Hadoop ecosystem; writer/reader schema split makes it fit DB exports); MessagePack / BSON for binary JSON.
 - **Understands when they can**: explain what happens when an old service reads data written by a new service.
 
 ---
@@ -54,12 +57,14 @@ Topic tree for system design, mapped to **Designing Data-Intensive Applications 
 - **DDIA**: Ch 5 pp. 151-162
 - **Primer**: §Database — Replication
 - **Concepts**: sync vs async, replication lag, read-your-own-writes, monotonic reads, follower failover, split brain
+- **Real-world**: MySQL (binlog replication), Postgres (streaming replication), Oracle Data Guard, SQL Server AlwaysOn, MongoDB replica sets, LinkedIn Espresso; Aurora / RDS Multi-AZ as managed examples.
 - **Understands when they can**: explain why async replication can violate read-your-own-writes; design a system that prevents it.
 
 ### 2.2 Multi-leader & leaderless replication
 - **Prereqs**: 2.1
 - **DDIA**: Ch 5 pp. 168-186
 - **Concepts**: multi-datacenter writes, conflict resolution (LWW, CRDTs), Dynamo-style quorum (R + W > N), read repair, anti-entropy, sloppy quorum, hinted handoff
+- **Real-world**: Dynamo paper (Amazon, 2007) → Riak, Cassandra, Voldemort (leaderless quorum); CouchDB (offline-first multi-leader); Tungsten Replicator (MySQL multi-leader), Postgres BDR, Oracle GoldenGate; CRDTs and version vectors as the conflict-tracking machinery.
 - **Understands when they can**: derive why R + W > N gives strong consistency; explain when it breaks.
 
 ---
@@ -71,12 +76,14 @@ Topic tree for system design, mapped to **Designing Data-Intensive Applications 
 - **DDIA**: Ch 6 pp. 199-218
 - **Primer**: §Database — Federation, Sharding
 - **Concepts**: range-based, hash-based, consistent hashing, virtual nodes, hot keys, rebalancing strategies
+- **Real-world**: fixed-partition (many partitions per node): Riak, Elasticsearch, Couchbase, Voldemort. Dynamic partitioning: HBase, MongoDB. Consistent hashing: Cassandra, Ketama (Memcached client), DynamoDB. Reference paper: Dynamo (DeCandia et al., 2007).
 - **Understands when they can**: walk through what happens when you add a node under each strategy; explain why consistent hashing exists.
 
 ### 3.2 Secondary indexes & request routing
 - **Prereqs**: 3.1
 - **DDIA**: Ch 6 pp. 218-225
 - **Concepts**: local (document-partitioned) vs global (term-partitioned) secondary indexes, scatter/gather, ZooKeeper for routing
+- **Real-world**: ZooKeeper-based metadata: HBase, SolrCloud, Kafka. Alternatives: MongoDB config servers; Cassandra and Riak use gossip for decentralized routing.
 - **Understands when they can**: explain the read amplification of scatter/gather and when each index style wins.
 
 ---
@@ -87,6 +94,7 @@ Topic tree for system design, mapped to **Designing Data-Intensive Applications 
 - **Prereqs**: SQL basics
 - **DDIA**: Ch 7
 - **Concepts**: ACID, isolation levels (read committed, snapshot isolation/MVCC, serializable), lost updates, write skew, phantoms
+- **Real-world**: serial-execution serializability: VoltDB / H-Store, Redis (single-threaded + Lua), Datomic (stored procs in Clojure/Java). Snapshot isolation: MySQL/InnoDB repeatable-read (no lost-update detection), Postgres MVCC. Watch out: Oracle calls snapshot isolation "serializable" — it isn't.
 - **Understands when they can**: give a concrete example of write skew and explain why snapshot isolation doesn't prevent it.
 
 ### 4.2 Trouble with distributed systems
@@ -99,6 +107,7 @@ Topic tree for system design, mapped to **Designing Data-Intensive Applications 
 - **Prereqs**: 4.1, 4.2
 - **DDIA**: Ch 9
 - **Concepts**: linearizability, ordering guarantees, total order broadcast, distributed transactions, 2PC, consensus (Paxos/Raft), CAP, PACELC
+- **Real-world**: consensus services: ZooKeeper, etcd, Consul. Linearizable distributed databases: Google Spanner (TrueTime), CockroachDB, FoundationDB. Reference papers: Paxos (Lamport), Raft (Ongaro & Ousterhout, 2014).
 - **Understands when they can**: distinguish linearizability from serializability; explain what 2PC's coordinator failure mode is.
 
 ---
@@ -109,18 +118,21 @@ Topic tree for system design, mapped to **Designing Data-Intensive Applications 
 - **Prereqs**: 2.1
 - **Primer**: §Asynchronism
 - **Concepts**: queue vs pub/sub, at-most-once / at-least-once / exactly-once, idempotency keys, dead-letter queues, ordering guarantees, when to use SQS vs Kafka vs RabbitMQ
+- **Real-world**: Kafka (log-based, replayable), RabbitMQ (AMQP broker), AWS SQS / SNS (managed), NATS, Pulsar, Redpanda. Stripe's idempotency-key pattern is the canonical "at-least-once + dedupe at boundary" example.
 - **Understands when they can**: explain why "exactly-once" is mostly a lie and how idempotency keys give the same effect.
 
 ### 5.2 Stream processing
 - **Prereqs**: 5.1
 - **DDIA**: Ch 11
 - **Concepts**: log-based messaging (Kafka), stream-stream joins, stream-table joins, windowing, watermarks, backpressure
+- **Real-world**: Kafka + Kafka Streams / KSQL, Apache Flink, Spark Structured Streaming, Samza, Beam. Akka for actor-based stream pipelines.
 - **Understands when they can**: explain why Kafka uses a log instead of a queue and what that buys you.
 
 ### 5.3 Batch processing
 - **Prereqs**: 5.2
 - **DDIA**: Ch 10
 - **Concepts**: MapReduce model, joins in MapReduce (sort-merge, broadcast hash, partitioned hash), output of batch jobs
+- **Real-world**: Hadoop MapReduce + HDFS, Apache Spark (in-memory, beyond shuffle-sort), Google Dremel (basis for Hive, Impala, Presto, Drill).
 
 ---
 
