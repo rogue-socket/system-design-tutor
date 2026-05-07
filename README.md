@@ -31,6 +31,19 @@ npx skills add rogue-socket/system-design-tutor
 mkdir -p ~/.claude/skills && git clone https://github.com/rogue-socket/system-design-tutor.git ~/.claude/skills/system-design-tutor
 ```
 
+### Other distributions
+
+This skill ships in four flavors — pick the branch that matches your host and platform:
+
+| Branch | Host | Platform | Install guide |
+|---|---|---|---|
+| `main` | Claude Code | macOS / Linux | (this README) |
+| `cc-windows` | Claude Code | Windows | [`install/windows.md`](https://github.com/rogue-socket/system-design-tutor/blob/cc-windows/install/windows.md) |
+| `codex-macos` | Codex CLI | macOS / Linux | [`install/codex-macos.md`](https://github.com/rogue-socket/system-design-tutor/blob/codex-macos/install/codex-macos.md) |
+| `codex-windows` | Codex CLI | Windows | [`install/codex-windows.md`](https://github.com/rogue-socket/system-design-tutor/blob/codex-windows/install/codex-windows.md) |
+
+The Claude Code distributions share all curriculum content with `main`; only install paths and shell conventions differ. The Codex distributions add an `AGENTS.md` entry point and document a few host-specific behavior differences (no `/compact`, etc.).
+
 ## Usage
 
 Open Claude Code and say any of:
