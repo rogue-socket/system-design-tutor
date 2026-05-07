@@ -37,7 +37,9 @@ When Claude reports paths during a session, they may appear with forward slashes
 
 ## Line endings
 
-`progress.json`, `session-state.md`, and notes files are written and re-read by Claude across sessions. To prevent CRLF/LF churn from git, set this once in the workspace:
+`progress.json`, `session-state.md`, and notes files are written and re-read by Claude across sessions. **The skill creates `~/system-design/` lazily on first invocation** — the snippet below assumes that directory already exists, so run it *after* your first session, not before.
+
+To prevent CRLF/LF churn from git, set this once in the workspace:
 
 ```powershell
 cd $HOME\system-design
