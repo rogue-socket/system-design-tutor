@@ -180,6 +180,26 @@ User comes back, possibly days later. They say "continue" or "let's pick up" or 
    - 3-14 days: brief recap (1-2 sentences) before continuing
    - 14+ days: suggest a review session before forward progress
 
+## Switching tracks mid-course
+
+A user on Foundation may decide they want Builder, or vice versa. Honor it without penalty.
+
+**Triggers**: explicit phrases — "switch tracks", "switch to builder", "switch to foundation", "let's do projects instead", "let's do tier-by-tier instead".
+
+**Protocol** (do all four; no extra confirmation needed beyond the user's own phrasing):
+
+1. **Update `progress.json`**: change `user.track` to the new value. The underlying `topics` map is preserved — no foundations are lost.
+2. **Reset state for the new track**:
+   - Foundation → Builder: leave `course_position` as-is for posterity. Set `current_project` to all-null until they pick a project. Load `references/builder-projects.md` and propose a project per the goal-based recommendation table.
+   - Builder → Foundation: if `current_project.id` is set and `current_milestone > 1`, append the in-flight project to `completed_projects` (mark as switched, not finished — use a `notes: "switched mid-project at milestone N"` field). Reset `current_project` to all-null. Pick the next Foundation step using `progress.json.topics` (lowest-tier topic with `status != "complete"`).
+3. **Append an event to `event_log`**: `{ts, type: "track_switched", topic: null, details: "<from> → <to>"}`. This is auditable — repeat switches in a short window may indicate the user is hunting for a fit, in which case ask whether the goal needs revisiting.
+4. **Tell the user the new plan in one sentence**: *"Switched to Builder. Starting URL shortener at medium difficulty. First milestone: build the MVP. Pick storage."* (or the Foundation equivalent.) Don't preamble.
+
+**Don't**:
+- Force a fresh diagnostic on switch — the diagnostic answers are still valid.
+- Wipe the topic map. Foundations earned in Builder count toward Foundation; topics covered in Foundation count toward Builder unlocks.
+- Penalize abandonment by re-running onboarding.
+
 ## Mid-session crash recovery
 
 If the user opens a fresh session and `session-state.md` is recent (today/yesterday) but no explicit pause was logged, assume the conversation crashed or context was cleared without checkpointing. Handle gracefully:
