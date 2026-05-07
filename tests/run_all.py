@@ -72,9 +72,10 @@ def test_validator_fixture_valid():
 
 def test_template_has_required_top_level_fields():
     data = json.loads((ASSETS / "progress-template.json").read_text())
-    for key in ("user", "course_position", "current_session", "topics",
-                "flashcards", "exercises_completed", "session_log",
-                "event_log", "practical_coverage"):
+    for key in ("user", "course_position", "current_session", "current_project",
+                "completed_projects", "topics", "flashcards",
+                "exercises_completed", "session_log", "event_log",
+                "practical_coverage"):
         assert key in data, f"template missing {key}"
 
 
@@ -306,6 +307,85 @@ def test_exercise_bank_has_production_readiness_focus_contract():
         f"expected production_readiness_focus on at least 3 exercises, found {populated}"
 
 
+def test_template_has_track_field():
+    """user.track must be present in the template (null pre-onboarding)."""
+    data = json.loads((ASSETS / "progress-template.json").read_text())
+    assert "track" in data["user"], "template missing user.track"
+    assert data["user"]["track"] is None, f"template should have track=null pre-onboarding, got {data['user']['track']!r}"
+
+
+def test_template_has_current_project_field():
+    """current_project must be a top-level object with all required fields, defaulting to null/empty."""
+    data = json.loads((ASSETS / "progress-template.json").read_text())
+    assert "current_project" in data, "template missing current_project"
+    cp = data["current_project"]
+    for key in ("id", "difficulty", "started", "current_milestone",
+                "milestones_done", "stress_injections_done"):
+        assert key in cp, f"current_project missing {key}"
+    assert cp["id"] is None
+    assert cp["milestones_done"] == []
+    assert cp["stress_injections_done"] == []
+
+
+def test_template_has_completed_projects_field():
+    data = json.loads((ASSETS / "progress-template.json").read_text())
+    assert "completed_projects" in data, "template missing completed_projects"
+    assert data["completed_projects"] == []
+
+
+def test_validator_rejects_invalid_track():
+    fixture = json.loads((TESTS / "fixtures" / "progress_valid.json").read_text())
+    fixture["user"]["track"] = "bogus"
+    import tempfile
+    with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as f:
+        json.dump(fixture, f)
+        tmp = f.name
+    r = subprocess.run(
+        [sys.executable, str(TESTS / "validate_progress.py"), tmp],
+        capture_output=True, text=True,
+    )
+    assert r.returncode == 1, f"validator should reject invalid track, got rc={r.returncode}"
+    assert "track" in r.stdout, f"validator output should mention track: {r.stdout}"
+
+
+def test_validator_rejects_invalid_project_id():
+    fixture = json.loads((TESTS / "fixtures" / "progress_valid.json").read_text())
+    fixture["current_project"]["id"] = "kafka-clone"
+    import tempfile
+    with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as f:
+        json.dump(fixture, f)
+        tmp = f.name
+    r = subprocess.run(
+        [sys.executable, str(TESTS / "validate_progress.py"), tmp],
+        capture_output=True, text=True,
+    )
+    assert r.returncode == 1, f"validator should reject invalid project id, got rc={r.returncode}"
+    assert "current_project.id" in r.stdout, f"validator output should mention current_project.id: {r.stdout}"
+
+
+def test_validator_accepts_builder_track_with_project():
+    """Sanity: a Builder fixture with a real project should validate."""
+    fixture = json.loads((TESTS / "fixtures" / "progress_valid.json").read_text())
+    fixture["user"]["track"] = "builder"
+    fixture["current_project"] = {
+        "id": "url-shortener",
+        "difficulty": "medium",
+        "started": "2026-05-01",
+        "current_milestone": 3,
+        "milestones_done": [1, 2],
+        "stress_injections_done": ["hot-key"],
+    }
+    import tempfile
+    with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as f:
+        json.dump(fixture, f)
+        tmp = f.name
+    r = subprocess.run(
+        [sys.executable, str(TESTS / "validate_progress.py"), tmp],
+        capture_output=True, text=True,
+    )
+    assert r.returncode == 0, f"builder fixture should validate: {r.stdout}"
+
+
 def test_progress_test_doc_validator_in_sync():
     """The validator inlined in test-progress-json.md should not be drastically out of date."""
     doc = (TESTS / "test-progress-json.md").read_text()
@@ -350,6 +430,12 @@ TESTS_LIST = [
     ("assets: production-readiness template exists", test_production_readiness_template_exists),
     ("practical-mode: documents production-readiness", test_practical_mode_documents_production_readiness),
     ("exercise-bank: production_readiness_focus contract", test_exercise_bank_has_production_readiness_focus_contract),
+    ("template: has user.track field (null)", test_template_has_track_field),
+    ("template: has current_project field", test_template_has_current_project_field),
+    ("template: has completed_projects field", test_template_has_completed_projects_field),
+    ("validator: rejects invalid track", test_validator_rejects_invalid_track),
+    ("validator: rejects invalid project id", test_validator_rejects_invalid_project_id),
+    ("validator: accepts builder track with project", test_validator_accepts_builder_track_with_project),
     ("docs/validator: in sync", test_progress_test_doc_validator_in_sync),
 ]
 

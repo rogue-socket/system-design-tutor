@@ -4,7 +4,8 @@
     "level": "intermediate",
     "goal": "TBD",
     "preferred_language": null,
-    "practice_preference": "medium"
+    "practice_preference": "medium",
+    "track": null
   },
   "course_position": {
     "current_step": null,
@@ -21,6 +22,15 @@
     "topic": null,
     "needs_compaction_check": false
   },
+  "current_project": {
+    "id": null,
+    "difficulty": null,
+    "started": null,
+    "current_milestone": null,
+    "milestones_done": [],
+    "stress_injections_done": []
+  },
+  "completed_projects": [],
   "topics": {},
   "flashcards": {},
   "exercises_completed": [],

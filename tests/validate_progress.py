@@ -4,14 +4,17 @@ import sys
 from datetime import datetime
 
 
-REQUIRED_TOP_LEVEL = ["user", "course_position", "current_session", "topics", "flashcards", "exercises_completed", "session_log", "event_log", "practical_coverage"]
-REQUIRED_USER_FIELDS = ["started", "level", "goal", "preferred_language", "practice_preference"]
+REQUIRED_TOP_LEVEL = ["user", "course_position", "current_session", "current_project", "completed_projects", "topics", "flashcards", "exercises_completed", "session_log", "event_log", "practical_coverage"]
+REQUIRED_USER_FIELDS = ["started", "level", "goal", "preferred_language", "practice_preference", "track"]
 REQUIRED_COURSE_POSITION_FIELDS = ["current_step", "next_planned_steps", "deviations", "completed_steps"]
 REQUIRED_SESSION_FIELDS = ["active", "started_at", "last_checkpoint", "mode", "topic"]
+REQUIRED_CURRENT_PROJECT_FIELDS = ["id", "difficulty", "started", "current_milestone", "milestones_done", "stress_injections_done"]
 VALID_TOPIC_STATUS = {"not-started", "in-progress", "needs-review", "complete"}
-VALID_MODES = {None, "theory", "practical", "review", "mock-interview", "design-review", "onboarding"}
+VALID_MODES = {None, "theory", "practical", "review", "mock-interview", "design-review", "onboarding", "in-project"}
 VALID_PRACTICE_PREFERENCE = {"low", "medium", "high"}
 VALID_DIFFICULTY = {"easy", "medium", "hard"}
+VALID_TRACKS = {None, "foundation", "builder"}
+VALID_PROJECT_IDS = {None, "url-shortener", "chat-backend", "metrics-pipeline"}
 REQUIRED_PRACTICAL_COVERAGE_FIELDS = ["tier_counts", "required_tags_completed", "required_tags_missing", "coverage_score", "last_updated"]
 REQUIRED_TIERS = [
     "tier1-storage",
@@ -54,6 +57,8 @@ def validate_progress(p):
             g = p["user"]["goal"]
             if not isinstance(g, str) or not g.strip():
                 errors.append(f"user.goal must be a non-empty string, got {g!r}")
+        if "track" in p["user"] and p["user"]["track"] not in VALID_TRACKS:
+            errors.append(f"user.track invalid: {p['user']['track']!r} (expected one of {VALID_TRACKS})")
 
     if "course_position" in p:
         for f in REQUIRED_COURSE_POSITION_FIELDS:
@@ -76,6 +81,31 @@ def validate_progress(p):
             errors.append("current_session.active must be a boolean")
         if "mode" in cs and cs["mode"] not in VALID_MODES:
             errors.append(f"current_session.mode invalid: {cs['mode']!r}")
+
+    if "current_project" in p:
+        cp = p["current_project"]
+        if not isinstance(cp, dict):
+            errors.append("current_project must be an object")
+        else:
+            for f in REQUIRED_CURRENT_PROJECT_FIELDS:
+                if f not in cp:
+                    errors.append(f"missing current_project.{f}")
+            if "id" in cp and cp["id"] not in VALID_PROJECT_IDS:
+                errors.append(f"current_project.id invalid: {cp['id']!r} (expected one of {VALID_PROJECT_IDS})")
+            if "difficulty" in cp and cp["difficulty"] is not None and cp["difficulty"] not in VALID_DIFFICULTY:
+                errors.append(f"current_project.difficulty invalid: {cp['difficulty']!r}")
+            if "milestones_done" in cp and not isinstance(cp["milestones_done"], list):
+                errors.append("current_project.milestones_done must be a list")
+            if "stress_injections_done" in cp and not isinstance(cp["stress_injections_done"], list):
+                errors.append("current_project.stress_injections_done must be a list")
+            if "started" in cp and cp["started"] is not None:
+                try:
+                    validate_date(cp["started"], "current_project.started")
+                except AssertionError as e:
+                    errors.append(str(e))
+
+    if "completed_projects" in p and not isinstance(p["completed_projects"], list):
+        errors.append("completed_projects must be a list")
 
     if "practical_coverage" in p:
         pc = p["practical_coverage"]

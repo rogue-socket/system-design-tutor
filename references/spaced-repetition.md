@@ -13,7 +13,8 @@ Located at the workspace root. Here's the full schema:
     "level": "intermediate",
     "goal": "interview-prep",
     "preferred_language": "python",
-    "practice_preference": "medium"
+    "practice_preference": "medium",
+    "track": "foundation"
   },
   "course_position": {
     "current_step": "P3",
@@ -32,6 +33,15 @@ Located at the workspace root. Here's the full schema:
     "topic": "consistent-hashing",
     "needs_compaction_check": false
   },
+  "current_project": {
+    "id": null,
+    "difficulty": null,
+    "started": null,
+    "current_milestone": null,
+    "milestones_done": [],
+    "stress_injections_done": []
+  },
+  "completed_projects": [],
   "topics": {
     "consistent-hashing": {
       "status": "in-progress",
@@ -131,9 +141,24 @@ Located at the workspace root. Here's the full schema:
 **`current_session`** (NEW): Live state during a session. Reset to `active: false` when session ends.
 - `active`: Is a session currently running?
 - `started_at` / `last_checkpoint`: For detecting stale state
-- `mode`: theory | practical | review | mock-interview | design-review | onboarding
+- `mode`: theory | practical | review | mock-interview | design-review | onboarding | in-project
 - `topic`: What's being worked on right now
 - `needs_compaction_check`: Set to true when the skill should evaluate whether to suggest /compact next turn
+
+**`user.track`**: Traversal strategy through the curriculum.
+- `foundation`: bottom-up. Walk `references/curriculum.md`'s ordered path tier by tier.
+- `builder`: top-down. Build anchor projects from `references/builder-projects.md`; foundations unlock just-in-time.
+- `null`: pre-onboarding only. Onboarding fills this in Step 1.5.
+
+**`current_project`**: Active Builder project state. Only meaningful when `user.track == "builder"`. Fields are `null` / empty otherwise.
+- `id`: `url-shortener` | `chat-backend` | `metrics-pipeline` | `null`
+- `difficulty`: `easy` | `medium` | `hard` | `null` — the chosen difficulty tier from `references/builder-projects.md`
+- `started`: YYYY-MM-DD — when the user started this project
+- `current_milestone`: integer (the milestone number they're working on now)
+- `milestones_done`: list of completed milestone numbers
+- `stress_injections_done`: list of stress-injection labels already delivered (avoids repeats)
+
+**`completed_projects`**: Append-only list of finished Builder projects. Each entry: `{id, difficulty, started, completed}`. Preserved across project switches.
 
 **`topics[topic].status`**:
 - `not-started` (default if missing)

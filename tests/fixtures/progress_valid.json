@@ -4,7 +4,8 @@
     "level": "intermediate",
     "goal": "interview-prep",
     "preferred_language": "python",
-    "practice_preference": "medium"
+    "practice_preference": "medium",
+    "track": "foundation"
   },
   "course_position": {
     "current_step": "P3",
@@ -21,6 +22,15 @@
     "topic": "consistent-hashing",
     "needs_compaction_check": false
   },
+  "current_project": {
+    "id": null,
+    "difficulty": null,
+    "started": null,
+    "current_milestone": null,
+    "milestones_done": [],
+    "stress_injections_done": []
+  },
+  "completed_projects": [],
   "topics": {
     "consistent-hashing": {
       "status": "in-progress",
