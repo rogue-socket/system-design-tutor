@@ -33,8 +33,9 @@ Make the skill globally available across all Codex sessions by linking its `AGEN
 git clone -b codex-windows https://github.com/rogue-socket/system-design-tutor.git $HOME\system-design-tutor
 New-Item -ItemType Directory -Force -Path "$HOME\.codex" | Out-Null
 
-# Symlink (preferred — requires Developer Mode enabled OR running PowerShell as Administrator)
-New-Item -ItemType SymbolicLink `
+# Symlink (preferred — requires Developer Mode enabled OR running PowerShell as Administrator).
+# -Force overwrites any existing ~/.codex/AGENTS.md.
+New-Item -ItemType SymbolicLink -Force `
   -Path "$HOME\.codex\AGENTS.md" `
   -Target "$HOME\system-design-tutor\AGENTS.md"
 ```
@@ -42,11 +43,11 @@ New-Item -ItemType SymbolicLink `
 If you can't enable Developer Mode and don't want to run elevated, fall back to copying the file (you'll need to re-copy after `git pull`s):
 
 ```powershell
-Copy-Item "$HOME\system-design-tutor\AGENTS.md" "$HOME\.codex\AGENTS.md"
+Copy-Item -Force "$HOME\system-design-tutor\AGENTS.md" "$HOME\.codex\AGENTS.md"
 ```
 
-**Caveat:** Codex's global scope reads `~/.codex/AGENTS.md` (or `AGENTS.override.md` if present). If you already have a global `AGENTS.md` from another setup, this symlink/copy will replace it. Either:
-- Append the contents of this repo's `AGENTS.md` to your existing global file instead, or
+**Caveat:** Codex's global scope reads `~/.codex/AGENTS.md` (or `AGENTS.override.md` if present). The commands above **overwrite** any existing global `AGENTS.md`. If you already have one with content you care about, do this instead:
+- Append the contents of this repo's `AGENTS.md` to your existing global file (skip the symlink/copy), or
 - Use `$env:CODEX_HOME` to point Codex at a different config dir for this skill.
 
 ## Workspace location
@@ -55,10 +56,27 @@ Identical to all other distributions: `~/system-design/`, which on Windows resol
 
 ## Updating
 
+The `codex-windows` branch is **rebased** on top of upstream branches (`codex-macos` and `cc-windows` content) when shared content changes. Because of that, `git pull` should use rebase, not merge — set this once after cloning:
+
 ```powershell
 cd $HOME\system-design-tutor
+git config pull.rebase true
+```
+
+Then update normally:
+
+```powershell
 git pull
 ```
+
+If you skip the `pull.rebase` config and a maintainer-side rebase has happened upstream, `git pull` will create a confusing merge commit (or refuse outright). Recover with:
+
+```powershell
+git fetch origin
+git reset --hard origin/codex-windows
+```
+
+(Discards any local commits — fine for a clean install with no local edits.)
 
 If you used Pattern B with `Copy-Item` (not symlink), you'll also need to re-copy `AGENTS.md` after each pull. Symlinks pick up changes automatically.
 
