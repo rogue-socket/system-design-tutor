@@ -82,6 +82,32 @@ Before the diagnostic, ask the user one question and save the answer to `progres
 
 Accept either the numbered choice (map to `interview-prep` / `production` / `deep-learning` / `concurrency-bugs`) or a free-form string. The goal shapes the diagnostic emphasis (Step 2) and the default course path (`references/curriculum.md` "Path suggestions by goal").
 
+### Step 1.6: Capture the track
+
+The course offers two traversals of the same curriculum. Ask once, save to `progress.json.user.track`. **Suggest a default based on the goal**, but always let the user override.
+
+Goal-derived default:
+
+| Goal | Suggested track | Rationale |
+|---|---|---|
+| `interview-prep` | foundation | Systematic tier coverage maps directly to interview rubrics |
+| `production` | builder | Real-systems framing matches day-job context |
+| `deep-learning` | foundation | Linear DDIA-style coverage |
+| `concurrency-bugs` | foundation | Targeted gap-filling is easier in tier order |
+
+Phrasing template (substitute the suggestion):
+
+> "Two ways to take this course — both end at the same place:
+>
+>   1. **Foundation** — bottom-up. Walk the curriculum tier by tier (storage → replication → partitioning → ...). Systematic, predictable.
+>   2. **Builder** — top-down. Pick a real system to build (URL shortener, chat backend, or metrics pipeline), and learn foundations as the design hits gaps.
+>
+> Based on your goal, I'd suggest **<suggested>**. Pick: 1 / 2 / explain more."
+
+If they pick "explain more", give a 3-line difference: Foundation = systematic, drier, predictable; Builder = motivated by real needs, less predictable, same total content. Then re-ask.
+
+Save the choice as `"foundation"` or `"builder"` in `progress.json.user.track`. Track is editable later — the user can switch with "switch tracks" at any session start.
+
 ### Step 2: Run the diagnostic
 
 Don't ask the user if they want a diagnostic. Just run it.
@@ -117,18 +143,26 @@ Don't reveal answers as you go. After all 8, give a clean assessment:
 ### Step 3: Decide the path and start the first lesson
 
 Based on the diagnostic:
-- Pick the first topic. Almost always either the lowest-tier weak area, or the next prerequisite of their stated goal.
 - Save findings to `~/system-design/notes/diagnostic-YYYY-MM-DD.md`.
 - Update `progress.json` with topic statuses based on diagnostic answers.
 - Seed initial entries in the SR queue for topics they got wrong.
 
-Then **announce the path and immediately start the first lesson**:
+Then branch on `user.track`:
 
-> "Plan: we'll start with [topic] because [reason from diagnostic]. After that, [next 2-3 topics]. The full path adapts as we go.
->
-> Starting now: [topic]."
+**If `track == "foundation"`** (default behavior):
+- Pick the first topic. Almost always either the lowest-tier weak area, or the next prerequisite of their stated goal.
+- Announce: *"Plan: we'll start with [topic] because [reason from diagnostic]. After that, [next 2-3 topics]. The full path adapts as we go. Starting now: [topic]."*
+- Transition straight into theory mode. Do not pause to ask "ready?" — just begin.
 
-Then transition straight into theory mode. Do not pause to ask "ready?" — just begin.
+**If `track == "builder"`**:
+- Load `references/builder-projects.md`. Use the "Project recommendation by goal" table there to pick a starting project, but defer to user choice if they want a different one.
+- Calibrate difficulty from the diagnostic: weak diagnostic → easy tier; mixed → medium; strong → hard.
+- Set `progress.json.current_project` with `id`, `difficulty`, `started: today`, `current_milestone: 1`, empty `milestones_done` and `stress_injections_done`.
+- Set `current_session.mode = "in-project"`.
+- Announce: *"Plan: you're going to build a [project name] at [difficulty]. First milestone: [milestone 1 title]. We'll learn foundations as you hit them, no front-loaded theory. Starting now: pick the data model — defend it."*
+- Transition straight into the project — see the "Builder project" row in the mode dispatch table for the working loop.
+
+When you first assign a practical exercise or project milestone in this or any later session, explicitly tell the user:
 
 When you first assign a practical exercise in this or any later session, explicitly tell the user:
 > "If this feels off-level, say 'make this easier' or 'make this harder' and I'll adjust without changing the topic."
@@ -147,9 +181,10 @@ The standard "user is back" flow. Detailed protocol is in `references/session-co
 
 1. Read `progress.json` and `session-state.md`.
 2. **Propose, don't ask.** Use this priority order:
-   - Mid-lesson/mid-exercise from <14 days ago: resume that.
+   - Mid-lesson/mid-exercise/mid-milestone from <14 days ago: resume that.
    - SR items overdue: do those first, then continue.
-   - Clear next curriculum step: announce it.
+   - **If `user.track == "builder"`** and `current_project.id` is set: announce the next milestone (or a stress injection if 2-3 are due) from `references/builder-projects.md`.
+   - Otherwise: clear next curriculum step from `references/curriculum.md`. Announce it.
 3. Format: one paragraph, max 4 lines.
    > "Welcome back. Last time we [where we left off]. Today: [resume X], then [next planned step]. SR queue has [N] items due — let's knock those out first. Sound good?"
 4. Wait for "yes" or override.
@@ -170,6 +205,7 @@ Once you know what you're doing this session, dispatch to the right mode:
 |---|---|
 | Theory lesson | `references/theory-modes.md` + `references/incidents.md` |
 | Practical exercise | `references/practical-mode.md` + `references/exercise-bank.md` |
+| Builder project (`in-project` mode) | `references/builder-projects.md` (+ `references/curriculum.md` when foundations unlock) |
 | Spaced repetition / quiz | `references/spaced-repetition.md` |
 | Mock interview | (inline below — see Mock Interview Mode) |
 | Design review | (inline below — see Design Review Mode) |
@@ -380,9 +416,10 @@ Load only when the relevant mode is active:
 - `references/theory-modes.md` — flowcharts, mindmaps, flashcards, Socratic, auto-quiz
 - `references/practical-mode.md` — playbook for runnable code exercises
 - `references/exercise-bank.md` — catalog of exercises by topic
+- `references/builder-projects.md` — anchor projects for Builder-track traversal: milestones, difficulty knobs, stress injections, foundation unlock protocol
 - `references/incidents.md` — real-world postmortems and case studies, by topic
-- `references/spaced-repetition.md` — `progress.json` schema, SM-2 lite math
-- `references/session-control.md` — session pause/resume, context management, `/compact` and `/clear` protocols, `session-state.md` schema
+- `references/spaced-repetition.md` — `progress.json` schema (incl. `track` and `current_project`), SM-2 lite math
+- `references/session-control.md` — session pause/resume, context management, `/compact` and `/clear` protocols, `session-state.md` schema, track-switching protocol
 - `references/anti-patterns-with-examples.md` — paired correct/incorrect examples for each tone anti-pattern; load when reasoning about response style
 
 ## Asset files
