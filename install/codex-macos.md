@@ -29,11 +29,13 @@ If you want trigger phrases to work from any directory, link the skill's `AGENTS
 ```bash
 git clone -b codex-macos https://github.com/rogue-socket/system-design-tutor.git ~/system-design-tutor
 mkdir -p ~/.codex
-ln -s ~/system-design-tutor/AGENTS.md ~/.codex/AGENTS.md
+ln -sfn ~/system-design-tutor/AGENTS.md ~/.codex/AGENTS.md
 ```
 
-**Caveat:** Codex's global scope reads `~/.codex/AGENTS.md` (or `AGENTS.override.md` if present). If you already have a global `AGENTS.md` from another setup, this symlink will replace it. Either:
-- Append the contents of this repo's `AGENTS.md` to your existing global file instead of symlinking, or
+The `-sfn` flags atomically replace any existing `~/.codex/AGENTS.md` (file or symlink). Without `-f`, `ln` would fail with `File exists` if a global `AGENTS.md` was already present.
+
+**Caveat:** Codex's global scope reads `~/.codex/AGENTS.md` (or `AGENTS.override.md` if present). The command above **overwrites** any existing global `AGENTS.md`. If you already have one with content you care about, do this instead:
+- Append the contents of this repo's `AGENTS.md` to your existing global file (skip the symlink), or
 - Use `CODEX_HOME` to point Codex at a different config dir for this skill.
 
 ## Workspace location
@@ -42,12 +44,27 @@ Identical to the Claude Code distribution: `~/system-design/`. The skill creates
 
 ## Updating
 
+The `codex-macos` branch is **rebased** on top of `main` whenever shared content changes upstream. Because of that, `git pull` should use rebase, not merge — set this once after cloning:
+
 ```bash
 cd ~/system-design-tutor
+git config pull.rebase true
+```
+
+Then update normally:
+
+```bash
 git pull
 ```
 
-If shared content (curriculum, references, exercises) changed on `main`, the `codex-macos` branch is rebased on top of it, so a `git pull` brings both the shared updates and any Codex-specific deltas.
+If you skip the `pull.rebase` config and a maintainer-side rebase has happened upstream, `git pull` will create a confusing merge commit (or refuse outright). If that happens, recover with:
+
+```bash
+git fetch origin
+git reset --hard origin/codex-macos
+```
+
+(This discards any local commits on the branch — fine for a clean install with no local edits.)
 
 ## Known divergences from CC
 
